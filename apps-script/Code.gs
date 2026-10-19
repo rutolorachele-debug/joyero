@@ -51,17 +51,29 @@ function onOpen() {
 function mostrarMiCodigo() {
   var plantilla = HtmlService.createTemplateFromFile('Codigo');
   plantilla.codigo = codigoDeAcceso_() || '';
-  var html = plantilla.evaluate().setWidth(420).setHeight(260);
+  var html = plantilla.evaluate().setWidth(440).setHeight(320);
   SpreadsheetApp.getUi().showModalDialog(html, TEXTOS.tituloVentana);
 }
 
-/** Llamada desde la ventana cuando el script no conoce su propia URL. */
+/**
+ * Llamada desde la ventana «Mostrar mi código» con la URL de la aplicación web (/exec).
+ * Antes de guardarla comprueba que responde de verdad con la clave de este joyero.
+ */
 function guardarUrlAplicacion(url) {
   var id = idDesdeUrl_(url);
   if (!id) return { ok: false };
+  var clave = obtenerClave_();
+  try {
+    var r = UrlFetchApp.fetch('https://script.google.com/macros/s/' + id + '/exec?clave=' + clave,
+      { muteHttpExceptions: true, followRedirects: true });
+    var json = JSON.parse(r.getContentText());
+    if (!json || json.ok !== true) return { ok: false };
+  } catch (e) {
+    return { ok: false };
+  }
   var props = PropertiesService.getScriptProperties();
   props.setProperties({ JOYERO_IMPL: id, JOYERO_IMPL_HOJA: idHoja_() });
-  return { ok: true, codigo: componerCodigo_(id, obtenerClave_()) };
+  return { ok: true, codigo: componerCodigo_(id, clave) };
 }
 
 function codigoDeAcceso_() {
@@ -74,11 +86,11 @@ function componerCodigo_(idImpl, clave) {
   return 'joy_' + idImpl + '_' + clave;
 }
 
+/**
+ * Solo se usa la URL que la persona pegó y que se comprobó.
+ * (ScriptApp.getService().getUrl() devuelve la implementación de prueba, que no sirve para la web.)
+ */
 function idImplementacion_() {
-  var url = null;
-  try { url = ScriptApp.getService().getUrl(); } catch (e) { url = null; }
-  var id = idDesdeUrl_(url);
-  if (id) return id;
   var props = PropertiesService.getScriptProperties();
   if (props.getProperty('JOYERO_IMPL_HOJA') === idHoja_()) return props.getProperty('JOYERO_IMPL');
   return null;
