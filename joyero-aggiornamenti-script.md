@@ -5,10 +5,10 @@ Si applicano **tutte insieme**, in un unico aggiornamento, quando Claude lo segn
 
 ## Stato
 
-- Versione installata nel tuo Sheet: **1** (19/10/2026)
-- Prossima versione: **2**, pronta da applicare (19/10/2026)
+- Versione installata nel tuo Sheet e nel modello: **2** (19/10/2026)
+- Prossima versione: **3**, nessuna modifica in attesa
 
-## Modifiche in attesa (versione 2)
+## Versione 2 (installata il 19/10/2026)
 
 | # | File | Cosa cambia | Perché | Decisa il |
 |---|------|-------------|--------|-----------|
@@ -16,8 +16,6 @@ Si applicano **tutte insieme**, in un unico aggiornamento, quando Claude lo segn
 | 2 | Code.gs | Ogni nuova joya arriva dalla web con un suo codice. Se la stessa richiesta arriva due volte (per esempio la connessione cade proprio mentre salvi e la web riprova), lo script non crea una seconda riga. Vale sia per "Guardar" sia per l'importazione a blocchi. | Requisito "non perdere mai dati" senza creare doppioni quando la rete è instabile. | 19/10/2026 |
 | 4 | Code.gs, Codigo.html | "Mostrar mi código" non usa più l'indirizzo che lo script trova da solo (era quello di prova e dava errore 404 sul sito). La prima volta chiede di incollare la URL della pubblicazione, controlla che funzioni e solo allora mostra il código. | Errore trovato nella prima prova vera: il código conteneva l'indirizzo sbagliato. | 19/10/2026 |
 | 3 | Code.gs | Se il link risulta già presente, lo script non crea più tipi o temi nuovi prima che tu abbia confermato "Guardar igualmente". | Correzione: prima un tema nuovo poteva comparire anche se poi annullavi. | 19/10/2026 |
-
-La web funziona già con la versione 1: senza l'aggiornamento, le joyas rispuntate nella 3.2 vengono saltate e la protezione dai doppioni per rete instabile non è attiva.
 
 Le modifiche riguardano solo il codice: **le schede, le colonne e i dati dello Sheet non cambiano**.
 
@@ -46,3 +44,4 @@ Apri la app Joyero e verifica che le joyas si carichino. Se compare un errore, s
 | Versione | Data | Contenuto |
 |----------|------|-----------|
 | 1 | 19/10/2026 | Prima installazione: lettura e scrittura, categorie, metadati, classificazione, importazione a blocchi, menu "Mostrar mi código". |
+| 2 | 19/10/2026 | Modifiche 1-4 della tabella sopra. |
