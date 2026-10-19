@@ -139,9 +139,9 @@ export default {
     texto: 'Sube un archivo HTML de favoritos: el de tu navegador o uno que te haya pasado otra persona desde su Joyero.',
     comoExportar: 'Cómo exportar tus favoritos (desde el ordenador)',
     navegadores: [
-      { nombre: 'Chrome', pasos: 'Menú ⋮ > Marcadores y listas > Gestor de marcadores > ⋮ > Exportar marcadores.' },
-      { nombre: 'Safari', pasos: 'Archivo > Exportar > Marcadores.' },
-      { nombre: 'Firefox', pasos: 'Marcadores > Gestionar marcadores > Importar y respaldar > Exportar marcadores a HTML.' }
+      { nombre: 'Chrome', pasos: 'Menú ⋮ > Marcadores y listas > Administrador de marcadores > ⋮ > Exportar marcadores.' },
+      { nombre: 'Safari', pasos: 'Archivo > Exportar los datos de navegación a un archivo > Marcadores. Se descarga un archivo .zip: ábrelo y sube el archivo HTML que hay dentro.' },
+      { nombre: 'Firefox', pasos: 'Marcadores > Administrar marcadores > Importar y respaldar > Exportar marcadores a HTML.' }
     ],
     subir: 'Subir archivo',
     archivoNoValido: 'Este archivo no tiene favoritos que se puedan importar. Elige un archivo HTML de favoritos.', // PROVISIONAL
@@ -158,7 +158,9 @@ export default {
     error: 'Se ha cortado la importación. Las joyas ya guardadas no se pierden: toca «Reintentar» para seguir.', // PROVISIONAL
     listo: '¡Listo!',
     importadas: '{n} joyas importadas',
+    importadas1: '1 joya importada',
     saltadas: '{n} saltadas porque ya estaban en tu joyero',
+    saltadas1: '1 saltada porque ya estaba en tu joyero',
     porOrganizar: '{n} en «Por organizar»',
     verJoyero: 'Ver mi joyero',
     salirAviso: 'La importación está en curso. Si sales ahora, se detendrá.' // PROVISIONAL

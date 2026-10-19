@@ -224,8 +224,8 @@ export function Importar() {
       <div class="centro" style="gap: 24px">
         <div class="cifra">{t('importar.listo')}</div>
         <div style="display: flex; flex-direction: column; gap: 12px" class="resumen">
-          <div>{negrita(t('importar.importadas', { n: resumen.importadas }), resumen.importadas)}</div>
-          <div>{negrita(t('importar.saltadas', { n: resumen.saltadas }), resumen.saltadas)}</div>
+          <div>{negrita(resumen.importadas === 1 ? t('importar.importadas1') : t('importar.importadas', { n: resumen.importadas }), resumen.importadas)}</div>
+          <div>{negrita(resumen.saltadas === 1 ? t('importar.saltadas1') : t('importar.saltadas', { n: resumen.saltadas }), resumen.saltadas)}</div>
           <div>{negrita(t('importar.porOrganizar', { n: resumen.porOrganizar }), resumen.porOrganizar)}</div>
         </div>
       </div>

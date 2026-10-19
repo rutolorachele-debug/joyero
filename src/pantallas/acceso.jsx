@@ -13,7 +13,7 @@ export function Ingreso() {
   return (
     <main class="columna">
       <div class="centro" style="align-items: center; text-align: center; gap: 24px">
-        <div class="sq" style="width: 96px; height: 96px; border-radius: 28px; background: var(--sup1); display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 16px; font-weight: 500; color: var(--gris-icono)">{t('ingreso.logo')}</div>
+        <img src="/logo.png" width="96" height="96" alt="" style="display: block" />
         <div style="display: flex; flex-direction: column; gap: 8px">
           <h1 class="t-marca">Joyero</h1>
           <p class="t-cuerpo gris">{t('ingreso.claim')}</p>
