@@ -1,0 +1,293 @@
+/* Joyero · sistema visual (tavola «Joyero Sistema visual» + elementi derivati approvati) */
+
+:root {
+  --fondo: #000000;
+  --sup1: #121212;
+  --sup2: #1C1C1E;
+  --sup3: #2C2C2E;
+  --pannello: #161616;
+  --gris-icono: #636366;
+  --glifo-oscuro: #0A0A0A;
+  --primario: #E8E8E8;
+  --desactivado: #4A4A4C;
+  --desactivado-texto: #161616;
+  --texto: #FFFFFF;
+  --texto2: #8E8E93;
+  --texto3: #3A3A3C;
+  --rojo: #FF453A;
+  --velo: rgba(0, 0, 0, 0.72);
+
+  --margen: 32px;
+  --arriba: calc(env(safe-area-inset-top, 0px) + 28px);
+  --abajo: max(calc(env(safe-area-inset-bottom, 0px) + 12px), 24px);
+  --columna: 480px;
+
+  --fuente: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--fondo); }
+body {
+  color: var(--texto);
+  font-family: var(--fuente);
+  font-size: 15px;
+  line-height: 22px;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+svg { display: block; flex: none; }
+a { color: inherit; }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--texto); outline-offset: -2px; }
+.oculto { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ───────── Columna ───────── */
+.columna {
+  position: relative;
+  max-width: var(--columna);
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--arriba) var(--margen) calc(var(--abajo) + 120px);
+  display: flex;
+  flex-direction: column;
+}
+.columna.sin-barra { padding-bottom: calc(var(--abajo) + 24px); }
+
+/* elementos fijos alineados a la columna, no a la ventana */
+.fijo {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--columna);
+}
+.barra-inferior {
+  bottom: 0;
+  padding: 0 var(--margen) var(--abajo);
+  z-index: 20;
+  pointer-events: none;
+}
+.barra-inferior::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 150px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), #000000 45%);
+  pointer-events: none;
+}
+.barra-inferior > * { position: relative; pointer-events: auto; }
+.barra-inferior .fila { display: flex; gap: 8px; }
+.barra-inferior .pila { display: flex; flex-direction: column; gap: 8px; }
+
+/* ───────── Tipografía ───────── */
+.t-display { margin: 0; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.02em; }
+.t-marca { margin: 0; font-size: 40px; line-height: 48px; font-weight: 700; letter-spacing: -0.03em; }
+.t-dialogo { margin: 0; font-size: 20px; line-height: 26px; font-weight: 700; }
+.t-fuerte { font-size: 16px; line-height: 22px; font-weight: 600; }
+.t-cuerpo { margin: 0; font-size: 15px; line-height: 22px; font-weight: 400; }
+.t-sec { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--texto2); }
+.t-nota { font-size: 16px; line-height: 24px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.gris { color: var(--texto2); }
+
+/* ───────── Barra superior ───────── */
+.cabecera { display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 12px; }
+.cabecera .t-display { min-width: 0; overflow-wrap: anywhere; }
+.cabecera.solo-izq { justify-content: flex-start; margin-left: -6px; }
+.titulo-bajo { margin-top: 24px; }
+
+/* botón de icono en círculo gris 32 (área táctil 44) */
+.bi {
+  width: 44px; height: 44px; border: 0; padding: 0; background: transparent;
+  display: inline-flex; align-items: center; justify-content: center; flex: none; color: var(--glifo-oscuro);
+  text-decoration: none;
+}
+.bi > span {
+  width: 32px; height: 32px; border-radius: 999px; background: var(--gris-icono);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.bi.der { margin-right: -6px; }
+
+/* ───────── Botones ───────── */
+.btn {
+  height: 56px; border-radius: 20px; border: 0; padding: 0 16px;
+  font-size: 16px; line-height: 22px; font-weight: 600;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-decoration: none; text-align: left;
+}
+.btn > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn.primario { background: var(--primario); color: #000; }
+.btn.secundario { background: var(--sup2); color: var(--texto); }
+.btn.terciario { background: var(--sup3); color: var(--texto); }
+.btn.peligro { background: var(--rojo); color: #000; }
+.btn.eliminar { background: var(--sup1); color: var(--rojo); }
+.btn:disabled { background: var(--desactivado); color: var(--desactivado-texto); }
+.btn.cargando { opacity: 0.6; }
+.btn-cuadrado {
+  width: 56px; height: 56px; flex: none; border-radius: 20px; border: 0; background: var(--sup1); color: var(--texto);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.zona-fab { bottom: var(--abajo); z-index: 20; padding: 0 var(--margen); display: flex; justify-content: flex-end; pointer-events: none; }
+.fab {
+  pointer-events: auto;
+  width: 56px; height: 56px; border-radius: 20px; border: 0; background: var(--primario); color: #000;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.sm {
+  height: 40px; border-radius: 14px; border: 0; background: var(--sup3); color: var(--texto);
+  font-size: 14px; line-height: 20px; font-weight: 600; padding: 0 14px; white-space: nowrap;
+}
+.sm.primario { background: var(--primario); color: #000; }
+.sm.rojo { color: var(--rojo); }
+.enlace {
+  border: 0; background: none; padding: 0; color: var(--texto);
+  font-size: 14px; line-height: 20px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* ───────── Ricerca y chip ───────── */
+.buscador {
+  height: 52px; border-radius: 20px; background: var(--sup2);
+  display: flex; align-items: center; gap: 12px; padding: 0 16px; color: var(--texto2);
+}
+.buscador input {
+  flex: 1; min-width: 0; border: 0; background: transparent; color: var(--texto); font-size: 14px; outline: none;
+  text-overflow: ellipsis;
+}
+.buscador input::placeholder { color: var(--texto2); opacity: 1; }
+.buscador input::-webkit-search-cancel-button { display: none; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  height: 36px; padding: 0 10px; border-radius: 12px; border: 0; background: var(--sup1); color: var(--texto);
+  font-size: 13px; line-height: 18px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.chip.con-icono { padding-left: 7px; }
+.chip.activo { background: var(--primario); color: #000; }
+.chip.nuevo { background: transparent; border: 1.5px dashed var(--gris-icono); color: var(--texto2); }
+.chip .ci { width: 22px; height: 22px; border-radius: 999px; background: #fff; color: #000; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.chip.activo .ci { background: #000; color: #fff; }
+.chip-flecha { gap: 4px; }
+.btn-descarga {
+  margin-left: auto; width: 36px; height: 36px; border-radius: 12px; border: 0; background: var(--sup1); color: var(--texto);
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+}
+.etiqueta { height: 22px; padding: 0 8px; border-radius: 8px; background: var(--sup2); color: var(--texto); font-size: 12px; line-height: 22px; font-weight: 500; white-space: nowrap; }
+.etiquetas { display: flex; flex-wrap: wrap; gap: 4px; }
+
+/* ───────── Menú desplegable de filtros ───────── */
+.capa-transparente { position: fixed; inset: 0; z-index: 30; }
+.desplegable {
+  position: absolute; z-index: 31; width: 240px; max-width: calc(100% - 0px);
+  border-radius: 20px; background: var(--sup2); padding: 8px;
+  display: flex; flex-direction: column;
+}
+.desplegable .opciones { display: flex; flex-direction: column; max-height: calc(44px * 6); overflow-y: auto; overscroll-behavior: contain; }
+.opcion {
+  display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 8px; border: 0; background: transparent;
+  color: var(--texto); font-size: 14px; line-height: 20px; font-weight: 500; text-align: left; width: 100%; border-radius: 12px;
+}
+.opcion > .txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.opcion.limpiar { margin-top: 4px; font-weight: 600; }
+
+/* casilla */
+.casilla { width: 24px; height: 24px; border-radius: 8px; flex: none; display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid var(--gris-icono); color: #000; }
+.casilla.marcada { background: #fff; border-color: #fff; }
+
+/* ───────── Iconos en círculo ───────── */
+.circulo { border-radius: 999px; background: #fff; color: #000; display: inline-flex; align-items: center; justify-content: center; flex: none; overflow: hidden; }
+.circulo.c28 { width: 28px; height: 28px; }
+.circulo.c48 { width: 48px; height: 48px; }
+.circulo img { display: block; object-fit: contain; }
+.circulo.c28 img { width: 16px; height: 16px; }
+.circulo.c48 img { width: 28px; height: 28px; }
+
+/* ───────── Card y filas ───────── */
+.lista { display: flex; flex-direction: column; }
+.card { display: flex; gap: 16px; padding: 12px 0; color: var(--texto); text-decoration: none; align-items: flex-start; }
+.card .cuerpo { flex: 1; min-width: 0; }
+.card .titulo { font-size: 16px; line-height: 22px; font-weight: 600; overflow-wrap: anywhere; }
+.card .autor { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--texto2); margin-top: 2px; overflow-wrap: anywhere; }
+.card .etiquetas { margin-top: 8px; }
+.fila-lista { display: flex; gap: 16px; align-items: center; padding: 12px 0; min-height: 52px; color: var(--texto); text-decoration: none; }
+.fila-lista.arriba { align-items: flex-start; }
+.fila-lista .crece { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.num { font-size: 14px; line-height: 22px; font-weight: 500; color: var(--texto2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ───────── Campos ───────── */
+.campos { display: flex; flex-direction: column; gap: 28px; }
+.campo { display: block; position: relative; }
+.campo .lab { display: block; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--texto2); }
+.campo input, .campo textarea {
+  display: block; width: 100%; border: 0; padding: 0; background: transparent; color: var(--texto); outline: none;
+  font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; caret-color: #fff;
+}
+.campo textarea { font-size: 16px; line-height: 24px; font-weight: 400; letter-spacing: 0; resize: none; overflow: hidden; min-height: 28px; }
+.campo.vacio textarea { font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; }
+.campo input::placeholder, .campo textarea::placeholder { color: var(--texto3); opacity: 1; }
+.campo.lleno input, .campo.lleno textarea, .campo.activo input, .campo.activo textarea { margin-top: 6px; }
+.campo .ejemplo { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--gris-icono); margin-top: 4px; }
+.campo.error .lab { color: var(--rojo); }
+.texto-error { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--rojo); margin-top: 8px; }
+.grupo .lab { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--texto2); }
+.grupo .chips { margin-top: 12px; }
+.campo-caja {
+  height: 52px; border-radius: 20px; background: var(--sup2); border: 0; padding: 0 16px; width: 100%;
+  font-size: 16px; font-weight: 600; color: var(--texto); outline: none;
+}
+
+/* ───────── Superficies ───────── */
+.caja { border-radius: 20px; background: var(--sup1); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.marcador {
+  width: 100%; aspect-ratio: 4 / 3; border-radius: 28px; background: var(--sup1);
+  display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--gris-icono); flex: none;
+}
+.esq { background: var(--sup1); border-radius: 8px; animation: pulso 1.4s ease-in-out infinite; }
+@keyframes pulso { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .esq { animation: none; } }
+
+/* ───────── Velo, panel y diálogo ───────── */
+.velo { position: fixed; inset: 0; background: var(--velo); z-index: 40; }
+.panel {
+  bottom: 0; z-index: 41; border-radius: 32px 32px 0 0; background: var(--pannello);
+  padding: 8px var(--margen) var(--abajo); display: flex; flex-direction: column;
+}
+.panel .asa { align-self: center; width: 28px; height: 5px; border-radius: 3px; background: #fff; }
+.dialogo-zona { position: fixed; inset: 0; z-index: 41; display: flex; align-items: center; justify-content: center; padding: 0 var(--margen); pointer-events: none; }
+.dialogo {
+  pointer-events: auto; width: 100%; max-width: calc(var(--columna) - 2 * var(--margen));
+  border-radius: 28px; background: var(--sup2); padding: 24px; display: flex; flex-direction: column;
+}
+.dialogo .acciones { margin-top: 24px; display: flex; flex-direction: column; gap: 8px; }
+
+/* ───────── Pestañas ───────── */
+.pestanas { display: flex; gap: 16px; }
+.pestana { border: 0; padding: 0; background: transparent; font-size: 22px; line-height: 28px; font-weight: 700; color: var(--gris-icono); }
+.pestana[aria-selected='true'] { color: var(--texto); }
+
+/* ───────── Rejilla de iconos ───────── */
+.rejilla { display: grid; grid-template-columns: repeat(6, 44px); gap: 8px; }
+.celda { width: 44px; height: 44px; border-radius: 14px; background: var(--sup1); border: 0; color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+.celda.activa { background: var(--primario); color: #000; }
+
+/* ───────── Progreso ───────── */
+.segmentos { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+.segmentos span { height: 4px; border-radius: 2px; background: var(--sup3); }
+.segmentos span.hecho { background: var(--primario); }
+.barra { height: 6px; border-radius: 3px; background: var(--sup2); overflow: hidden; }
+.barra > div { height: 6px; border-radius: 3px; background: var(--primario); transition: width 0.3s ease; }
+.cifra { font-size: 40px; line-height: 48px; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+/* ───────── Avisos (derivado, provisional) ───────── */
+.aviso { border-radius: 20px; background: var(--sup1); padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.aviso .txt { flex: 1; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--rojo); }
+
+.espacio { flex: 1; }
+.centro { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.negritas-blancas b { color: var(--texto); font-weight: 600; }
+a.btn[aria-disabled='true'] { background: var(--desactivado); color: var(--desactivado-texto); pointer-events: none; }
+.resumen > div { font-size: 16px; line-height: 22px; font-weight: 500; }
