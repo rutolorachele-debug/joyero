@@ -62,13 +62,13 @@ export default {
       },
       {
         titulo: 'Autoriza',
-        // PROVISIONAL: adaptado a la nueva pantalla de permisos de Google (casillas). Pendiente de aprobación.
-        texto: 'Toca «Autorizar acceso» y elige tu cuenta. Toca «Configuración avanzada» y luego «Ir a [nombre del proyecto] (no seguro)». En la lista de permisos, marca «Seleccionar todo» y toca «Continuar».',
+        // Adaptado a la pantalla de permisos actual de Google (con casillas) y a la URL que hay que copiar.
+        texto: 'Toca «Autorizar acceso» y elige tu cuenta. Toca «Configuración avanzada» y luego «Ir a [nombre del proyecto] (no seguro)». En la lista de permisos, marca «Seleccionar todo» y toca «Continuar». Al terminar, Google te mostrará la «URL de la aplicación web»: toca «Copiar».',
         nota: 'Google mostrará el aviso «Google no ha verificado esta aplicación»: es normal, porque el script lo acabas de crear tú al copiar la plantilla.'
       },
       {
         titulo: 'Copia tu código y entra',
-        texto: 'Vuelve a la pestaña del Sheet y recarga la página. En el menú de arriba aparecerá «Joyero»: toca «Mostrar mi código» y luego «Copiar». Pega el código aquí abajo y toca «Entrar».',
+        texto: 'Vuelve a la pestaña del Sheet y recarga la página. En el menú de arriba aparecerá «Joyero»: toca «Mostrar mi código», pega la URL que copiaste y toca «Mostrar mi código». Luego toca «Copiar», pega el código aquí abajo y toca «Entrar».',
         nota: 'Siempre podrás volver a verlo en Ajustes o en tu Google Sheet.'
       }
     ]
