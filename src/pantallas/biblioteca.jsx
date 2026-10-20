@@ -1,50 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { Settings, Search, ChevronDown, ChevronUp, Download, Plus, Upload, X } from 'lucide-preact';
+import { Settings, Search, Plus, Upload, X } from 'lucide-preact';
 import { t } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
 import { navegar } from '../ruta.js';
 import { filtrar, hayFiltros, porOrganizar } from '../lib/filtros.js';
-import { crearArchivoFavoritos, nombreArchivo, descargarTexto } from '../lib/favoritos.js';
 import { claveError } from '../lib/api.js';
-import { BotonIcono, Casilla, IconoJoya, EsqueletoLista, Panel, Aviso } from '../componentes/base.jsx';
-import { IconoTipo } from '../componentes/iconos.jsx';
+import { BotonIcono, IconoJoya, EsqueletoLista, Panel, Aviso } from '../componentes/base.jsx';
+import { FilaChips } from '../componentes/filtros.jsx';
 
 // Los filtros se conservan mientras la app está abierta (al volver del detalle siguen ahí).
 let filtrosGuardados = { busqueda: '', tipos: [], temas: [], porOrganizar: false };
-
-function Desplegable({ etiqueta, opciones, elegidas, onCambiar, conIconos, mostrarLimpiar, onLimpiar, izquierda }) {
-  return (
-    <div class="desplegable sq" style={`top: 44px; left: ${izquierda}px`}>
-      <div class="opciones" role="listbox" aria-multiselectable="true" aria-label={etiqueta}>
-      {opciones.map((o) => {
-        const marcada = elegidas.includes(o.nombre);
-        return (
-          <button type="button" class="opcion" role="option" aria-selected={marcada ? 'true' : 'false'} key={o.nombre}
-            onClick={() => onCambiar(marcada ? elegidas.filter((x) => x !== o.nombre) : elegidas.concat([o.nombre]))}>
-            <Casilla marcada={marcada} />
-            {conIconos && <span class="circulo" style="width: 22px; height: 22px"><IconoTipo nombre={o.icono} size={14} /></span>}
-            <span class="txt">{o.nombre}</span>
-          </button>
-        );
-      })}
-      </div>
-      {mostrarLimpiar && (
-        <button type="button" class="opcion limpiar" onClick={onLimpiar}>
-          <span style="width: 24px; display: inline-flex; justify-content: center"><X size={18} strokeWidth={2} aria-hidden="true" /></span>
-          <span class="txt">{t('biblioteca.limpiar')}</span>
-        </button>
-      )}
-    </div>
-  );
-}
 
 export function Biblioteca() {
   const { datos, hayDatos, cargando, errorCarga, recargar } = usarJoyero();
   const [fGuardado, setF] = useState(filtrosGuardados);
   const [abierto, setAbierto] = useState(null); // 'tipo' | 'tema' | null
   const [menuMas, setMenuMas] = useState(false);
-  const refTipo = useRef(null);
-  const refTema = useRef(null);
 
   const hayPorOrganizar = datos.joyas.some(porOrganizar);
   // Si ya no quedan joyas por organizar, la chip desaparece y su filtro deja de aplicarse.
@@ -55,9 +26,6 @@ export function Biblioteca() {
   const visibles = useMemo(() => filtrar(datos.joyas, f), [datos.joyas, f]);
   const filtrosActivos = hayFiltros(f);
 
-  const descargar = () => descargarTexto(crearArchivoFavoritos(visibles, t('biblioteca.porOrganizar')), nombreArchivo());
-
-  const posicion = (ref) => (ref.current ? ref.current.offsetLeft : 0);
 
   // Cabecera: el título queda siempre fijo; búsqueda y chips se esconden al bajar y vuelven al subir.
   const refTitulo = useRef(null);
@@ -103,35 +71,7 @@ export function Biblioteca() {
           onInput={(e) => cambiar({ busqueda: e.currentTarget.value })} />
       </label>
 
-      <div style="position: relative; margin-top: 12px; display: flex; align-items: center; gap: 8px">
-        <button type="button" ref={refTipo} class={`chip chip-flecha sq${f.tipos.length ? ' activo' : ''}`} aria-expanded={abierto === 'tipo' ? 'true' : 'false'} aria-haspopup="listbox"
-          onClick={() => setAbierto(abierto === 'tipo' ? null : 'tipo')}>
-          {t('biblioteca.tipo')}
-          {abierto === 'tipo' ? <ChevronUp size={14} strokeWidth={2.5} aria-hidden="true" /> : <ChevronDown size={14} strokeWidth={2.5} color={f.tipos.length ? '#000' : 'var(--texto2)'} aria-hidden="true" />}
-        </button>
-        <button type="button" ref={refTema} class={`chip chip-flecha sq${f.temas.length ? ' activo' : ''}`} aria-expanded={abierto === 'tema' ? 'true' : 'false'} aria-haspopup="listbox"
-          onClick={() => setAbierto(abierto === 'tema' ? null : 'tema')}>
-          {t('biblioteca.tema')}
-          {abierto === 'tema' ? <ChevronUp size={14} strokeWidth={2.5} aria-hidden="true" /> : <ChevronDown size={14} strokeWidth={2.5} color={f.temas.length ? '#000' : 'var(--texto2)'} aria-hidden="true" />}
-        </button>
-        {hayPorOrganizar && (
-          <button type="button" class={`chip sq${f.porOrganizar ? ' activo' : ''}`} aria-pressed={f.porOrganizar ? 'true' : 'false'}
-            onClick={() => cambiar({ porOrganizar: !f.porOrganizar })}>{t('biblioteca.porOrganizar')}</button>
-        )}
-        <button type="button" class="btn-descarga sq" aria-label={t('biblioteca.descargar')} onClick={descargar} disabled={!visibles.length}>
-          <Download size={18} strokeWidth={2.25} aria-hidden="true" />
-        </button>
-
-        {abierto && <div class="capa-transparente" onClick={() => setAbierto(null)} />}
-        {abierto === 'tipo' && (
-          <Desplegable etiqueta={t('biblioteca.tipo')} opciones={datos.tipos} elegidas={f.tipos} conIconos
-            izquierda={posicion(refTipo)} onCambiar={(tipos) => cambiar({ tipos })} mostrarLimpiar={filtrosActivos} onLimpiar={limpiar} />
-        )}
-        {abierto === 'tema' && (
-          <Desplegable etiqueta={t('biblioteca.tema')} opciones={datos.temas.map((nombre) => ({ nombre }))} elegidas={f.temas}
-            izquierda={Math.max(0, posicion(refTema) - 60)} onCambiar={(temas) => cambiar({ temas })} mostrarLimpiar={filtrosActivos} onLimpiar={limpiar} />
-        )}
-      </div>
+      <FilaChips f={f} cambiar={cambiar} limpiar={limpiar} hayPorOrganizar={hayPorOrganizar} abierto={abierto} setAbierto={setAbierto} />
       </div>
 
       {errorCarga && (

@@ -83,7 +83,6 @@ export default {
     tipo: 'Tipo',
     tema: 'Tema',
     porOrganizar: 'Por organizar',
-    descargar: 'Descargar joyas',
     limpiar: 'Limpiar filtros',
     anadir: 'Añadir',
     vacia: 'Todavía no tienes joyas. Toca + para guardar la primera.', // PROVISIONAL
@@ -179,6 +178,15 @@ export default {
     codigoTexto: 'Úsalo para entrar desde otros dispositivos.',
     salir: 'Salir',
     salirTexto: 'Desconecta tu joyero de este dispositivo. Tus joyas no se borran.'
+  },
+
+  exportar: {
+    titulo: 'Exportar tu joyero',
+    sub: 'Archivo HTML de favoritos', // PROVISIONAL
+    seleccionarTodas: 'Seleccionar todas',
+    deseleccionarTodas: 'Deseleccionar todas',
+    exportarN: 'Exportar {n} joyas',
+    exportar1: 'Exportar 1 joya'
   },
 
   categorias: {

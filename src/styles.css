@@ -191,10 +191,6 @@ a { color: inherit; }
 .chip .ci { width: 22px; height: 22px; border-radius: 999px; background: #fff; color: #000; display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .chip.activo .ci { background: #000; color: #fff; }
 .chip-flecha { gap: 4px; }
-.btn-descarga {
-  margin-left: auto; width: 36px; height: 36px; border-radius: 12px; border: 0; background: var(--sup1); color: var(--texto);
-  display: inline-flex; align-items: center; justify-content: center; flex: none;
-}
 .etiqueta { height: 22px; padding: 0 8px; border-radius: 8px; background: var(--sup2); color: var(--texto); font-size: 12px; line-height: 22px; font-weight: 500; white-space: nowrap; }
 .etiquetas { display: flex; flex-wrap: wrap; gap: 4px; }
 

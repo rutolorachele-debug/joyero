@@ -6,6 +6,7 @@ import { Biblioteca } from './pantallas/biblioteca.jsx';
 import { Formulario, Detalle } from './pantallas/joya.jsx';
 import { Importar } from './pantallas/importar.jsx';
 import { Ajustes, Categorias } from './pantallas/ajustes.jsx';
+import { Exportar } from './pantallas/exportar.jsx';
 
 const RUTAS_ACCESO = /^\/(entrar|codigo|tutorial(\/\d+)?)$/;
 
@@ -34,6 +35,7 @@ function Pantallas() {
   if (ruta === '/importar') return <Importar />;
   if (ruta === '/ajustes') return <Ajustes />;
   if (ruta === '/categorias') return <Categorias />;
+  if (ruta === '/exportar') return <Exportar />;
   return <Biblioteca />;
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { Layers, ChevronRight, LogOut, Pencil, X, Trash2 } from 'lucide-preact';
+import { Layers, ChevronRight, LogOut, Pencil, X, Trash2, Download } from 'lucide-preact';
 import { t, nJoyas } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
 import { navegar, volver } from '../ruta.js';
@@ -48,6 +48,11 @@ export function Ajustes() {
         <a class="fila-lista" href="#/categorias" onClick={(e) => { e.preventDefault(); navegar('/categorias'); }}>
           <span class="circulo c28"><Layers size={16} strokeWidth={2.25} aria-hidden="true" /></span>
           <span class="crece"><span class="t-fuerte">{t('ajustes.categorias')}</span><span class="t-sec">{t('ajustes.categoriasSub')}</span></span>
+          <ChevronRight size={20} strokeWidth={2.5} color="var(--gris-icono)" aria-hidden="true" />
+        </a>
+        <a class="fila-lista" href="#/exportar" onClick={(e) => { e.preventDefault(); navegar('/exportar'); }}>
+          <span class="circulo c28"><Download size={16} strokeWidth={2.25} aria-hidden="true" /></span>
+          <span class="crece"><span class="t-fuerte">{t('exportar.titulo')}</span><span class="t-sec">{t('exportar.sub')}</span></span>
           <ChevronRight size={20} strokeWidth={2.5} color="var(--gris-icono)" aria-hidden="true" />
         </a>
         <div class="caja sq">
