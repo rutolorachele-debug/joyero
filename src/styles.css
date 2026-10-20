@@ -59,7 +59,7 @@ a { color: inherit; }
   flex-direction: column;
 }
 /* 2.1: título fijo arriba; búsqueda y chips se esconden al bajar y vuelven al subir */
-.columna.cabecera-fija { padding-top: 0; }
+.columna.cabecera-fija { padding-top: 0; padding-bottom: calc(var(--abajo) + 72px); } /* 2.1: solo lo spazio del «+» (56) e un po' di aria */
 .barra-titulo { position: sticky; top: 0; z-index: 12; background: var(--fondo); padding-top: var(--arriba); padding-bottom: 12px; }
 /* Copre anche la zona sopra la barra (status bar e Dynamic Island in Safari) e i margini laterali:
    così niente scorre visibile dietro al titolo. */
