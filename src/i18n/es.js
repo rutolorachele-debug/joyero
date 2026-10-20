@@ -45,11 +45,11 @@ export default {
     pasos: [
       {
         titulo: 'Antes de empezar',
-        texto: 'Necesitas una cuenta de Google.\nTiempo estimado: 5-10 minutos.\nTu joyero es un Google Sheet en tu Drive: ahí se guardan todas tus joyas. Mientras ese documento exista, tus joyas siguen ahí, aunque dejes de usar Joyero. Solo se pierden si eliminas tu joyero o borras el Google Sheet.'
+        texto: 'Necesitas un ordenador y una cuenta de Google. Después podrás usar tu joyero desde cualquier dispositivo, también el móvil.\nTiempo estimado: 5-10 minutos.\nTu joyero es un Google Sheet en tu Drive: ahí se guardan todas tus joyas. Mientras ese documento exista, tus joyas siguen ahí, aunque dejes de usar Joyero. Solo se pierden si eliminas tu joyero o borras el Google Sheet.'
       },
       {
         titulo: 'Copia la plantilla',
-        texto: 'Esta plantilla es la base de datos de tu joyero: se llenará sola cada vez que añadas una joya.\nToca «Crear mi copia». En la página de Google, toca «Hacer una copia». Puedes ponerle el nombre que quieras.'
+        texto: 'Esta plantilla es la base de datos de tu joyero: se llenará sola cada vez que añadas una joya.\nHaz clic en «Crear mi copia». En la página de Google, haz clic en «Hacer una copia». Puedes ponerle el nombre que quieras.'
       },
       {
         titulo: 'Abre el script',
@@ -57,18 +57,18 @@ export default {
       },
       {
         titulo: 'Publica el script',
-        texto: 'Toca Implementar > Nueva implementación. Comprueba que esté así (normalmente ya viene configurado):\nTipo: Aplicación web · Ejecutar como: Yo · Quién tiene acceso: Cualquier usuario.\nLuego toca «Implementar».',
+        texto: 'Haz clic en Implementar > Nueva implementación. Comprueba que esté así (normalmente ya viene configurado):\nTipo: Aplicación web · Ejecutar como: Yo · Quién tiene acceso: Cualquier usuario.\nLuego haz clic en «Implementar».',
         nota: '«Cualquier usuario» solo sirve para que la web pueda comunicarse con tu Sheet; sin tu código, nadie puede leer ni escribir nada.'
       },
       {
         titulo: 'Autoriza',
         // Adaptado a la pantalla de permisos actual de Google (con casillas) y a la URL que hay que copiar.
-        texto: 'Toca «Autorizar acceso» y elige tu cuenta. Toca «Configuración avanzada» y luego «Ir a [nombre del proyecto] (no seguro)». En la lista de permisos, marca «Seleccionar todo» y toca «Continuar». Al terminar, Google te mostrará la «URL de la aplicación web»: toca «Copiar».\nLa URL empieza por https://script.google.com/macros/s/… y termina en /exec.',
+        texto: 'Haz clic en «Autorizar acceso» y elige tu cuenta. Haz clic en «Configuración avanzada» y luego «Ir a [nombre del proyecto] (no seguro)». En la lista de permisos, marca «Seleccionar todo» y haz clic en «Continuar». Al terminar, Google te mostrará la «URL de la aplicación web»: haz clic en «Copiar».\nLa URL empieza por https://script.google.com/macros/s/… y termina en /exec.',
         nota: 'Google mostrará el aviso «Google no ha verificado esta aplicación»: es normal, porque el script lo acabas de crear tú al copiar la plantilla.'
       },
       {
         titulo: 'Copia tu código y entra',
-        texto: 'Vuelve a la pestaña del Sheet y recarga la página. En el menú de arriba aparecerá «Joyero»: toca «Mostrar mi código», pega la URL que copiaste y toca «Mostrar mi código». Luego toca «Copiar», pega el código aquí abajo y toca «Entrar».',
+        texto: 'Vuelve a la pestaña del Sheet y recarga la página. En el menú de arriba aparecerá «Joyero»: haz clic en «Mostrar mi código», pega la URL que copiaste y haz clic en «Mostrar mi código». Luego haz clic en «Copiar», pega el código aquí abajo y haz clic en «Entrar».',
         nota: 'Siempre podrás volver a verlo en Ajustes o en tu Google Sheet.'
       }
     ]
