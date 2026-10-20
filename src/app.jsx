@@ -7,6 +7,8 @@ import { Formulario, Detalle } from './pantallas/joya.jsx';
 import { Importar } from './pantallas/importar.jsx';
 import { Ajustes, Categorias } from './pantallas/ajustes.jsx';
 import { Exportar } from './pantallas/exportar.jsx';
+import { EliminarJoyero } from './pantallas/eliminar.jsx';
+import { AvisoBreve } from './componentes/aviso.jsx';
 
 const RUTAS_ACCESO = /^\/(entrar|codigo|tutorial(\/\d+)?)$/;
 
@@ -36,6 +38,7 @@ function Pantallas() {
   if (ruta === '/ajustes') return <Ajustes />;
   if (ruta === '/categorias') return <Categorias />;
   if (ruta === '/exportar') return <Exportar />;
+  if (ruta === '/eliminar') return <EliminarJoyero />;
   return <Biblioteca />;
 }
 
@@ -43,6 +46,7 @@ export function App() {
   return (
     <ProveedorJoyero>
       <Pantallas />
+      <AvisoBreve />
     </ProveedorJoyero>
   );
 }

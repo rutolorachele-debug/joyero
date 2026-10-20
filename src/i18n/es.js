@@ -89,6 +89,20 @@ export default {
     sinResultados: 'Ninguna joya coincide con tu búsqueda.' // PROVISIONAL
   },
 
+  fijados: {
+    titulo: 'Fijados',
+    todas: 'Todas las joyas',
+    fijar: 'Fijar',
+    fijado: 'Fijado',
+    editar: 'Editar fijados',
+    terminar: 'Terminar edición', // PROVISIONAL (solo lector de pantalla)
+    quitar: 'Quitar {nombre} de fijados', // PROVISIONAL (solo lector de pantalla)
+    fijarJoya: 'Fijar joya',
+    quitarJoya: 'Quitar de fijados',
+    joyaFijada: 'Joya fijada',
+    joyaQuitada: 'Joya quitada de fijados' // PROVISIONAL
+  },
+
   menuMas: {
     anadir: 'Añadir joya',
     anadirSub: 'Pega un link',
@@ -187,6 +201,18 @@ export default {
     deseleccionarTodas: 'Deseleccionar todas',
     exportarN: 'Exportar {n} joyas',
     exportar1: 'Exportar 1 joya'
+  },
+
+  eliminar: {
+    titulo: 'Eliminar joyero',
+    texto: 'Se borrarán todas tus joyas, tus categorías y tus fijados, y tu código dejará de funcionar en todos tus dispositivos. Tu Google Sheet seguirá en tu Drive, vacío: puedes borrarlo tú.',
+    aviso: 'Exporta tu joyero para no perder tus joyas. Puedes volver a subir el archivo a un joyero nuevo en cualquier momento.',
+    exportar: 'Exportar tu joyero',
+    boton: 'Eliminar joyero',
+    dialogoTitulo: '¿Eliminar tu joyero?',
+    dialogoTexto: 'Se borrarán tus {n} joyas. No se puede deshacer.',
+    dialogoTexto1: 'Se borrará tu joya. No se puede deshacer.', // PROVISIONAL (singular)
+    confirmar: 'Eliminar'
   },
 
   categorias: {

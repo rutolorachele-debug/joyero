@@ -73,6 +73,11 @@ export function Ajustes() {
           icono={<LogOut size={20} strokeWidth={2} aria-hidden="true" />}>{t('ajustes.salir')}</Boton>
         <div class="t-sec">{t('ajustes.salirTexto')}</div>
       </div>
+      <div style="margin-top: 24px">
+        <a class="btn sq eliminar" href="#/eliminar" onClick={(e) => { e.preventDefault(); navegar('/eliminar'); }}>
+          <span>{t('eliminar.titulo')}</span><Trash2 size={20} strokeWidth={2} aria-hidden="true" />
+        </a>
+      </div>
     </main>
   );
 }
