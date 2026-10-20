@@ -41,16 +41,15 @@ export default {
   tutorial: {
     progreso: '{paso} de {total}',
     yaTengo: 'Ya tengo un código',
-    captura: 'screenshot del paso',
     crearCopia: 'Crear mi copia',
     pasos: [
       {
         titulo: 'Antes de empezar',
-        texto: 'Necesitas una cuenta de Google y unos 5 minutos. Vas a crear tu propio joyero en tu Google Drive: tus joyas son tuyas y nadie puede verlas sin tu código.'
+        texto: 'Necesitas una cuenta de Google.\nTiempo estimado: 5-10 minutos.\nTu joyero es un Google Sheet en tu Drive: ahí se guardan todas tus joyas. Mientras ese documento exista, tus joyas siguen ahí, aunque dejes de usar Joyero. Solo se pierden si eliminas tu joyero o borras el Google Sheet.'
       },
       {
         titulo: 'Copia la plantilla',
-        texto: 'Toca «Crear mi copia». En la página de Google, toca «Hacer una copia». Puedes ponerle el nombre que quieras.'
+        texto: 'Esta plantilla es la base de datos de tu joyero: se llenará sola cada vez que añadas una joya.\nToca «Crear mi copia». En la página de Google, toca «Hacer una copia». Puedes ponerle el nombre que quieras.'
       },
       {
         titulo: 'Abre el script',
@@ -58,13 +57,13 @@ export default {
       },
       {
         titulo: 'Publica el script',
-        texto: 'Arriba a la derecha, toca Implementar > Nueva implementación. Toca el engranaje junto a «Seleccionar tipo» y elige «Aplicación web». Configura «Ejecutar como: Yo» y «Quién tiene acceso: Cualquier usuario», y toca «Implementar».',
+        texto: 'Toca Implementar > Nueva implementación. Comprueba que esté así (normalmente ya viene configurado):\nTipo: Aplicación web · Ejecutar como: Yo · Quién tiene acceso: Cualquier usuario.\nLuego toca «Implementar».',
         nota: '«Cualquier usuario» solo sirve para que la web pueda comunicarse con tu Sheet; sin tu código, nadie puede leer ni escribir nada.'
       },
       {
         titulo: 'Autoriza',
         // Adaptado a la pantalla de permisos actual de Google (con casillas) y a la URL que hay que copiar.
-        texto: 'Toca «Autorizar acceso» y elige tu cuenta. Toca «Configuración avanzada» y luego «Ir a [nombre del proyecto] (no seguro)». En la lista de permisos, marca «Seleccionar todo» y toca «Continuar». Al terminar, Google te mostrará la «URL de la aplicación web»: toca «Copiar».',
+        texto: 'Toca «Autorizar acceso» y elige tu cuenta. Toca «Configuración avanzada» y luego «Ir a [nombre del proyecto] (no seguro)». En la lista de permisos, marca «Seleccionar todo» y toca «Continuar». Al terminar, Google te mostrará la «URL de la aplicación web»: toca «Copiar».\nLa URL empieza por https://script.google.com/macros/s/… y termina en /exec.',
         nota: 'Google mostrará el aviso «Google no ha verificado esta aplicación»: es normal, porque el script lo acabas de crear tú al copiar la plantilla.'
       },
       {

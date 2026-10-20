@@ -124,11 +124,9 @@ export function Tutorial({ paso }) {
       <div class="segmentos" style="margin-top: 8px" role="progressbar" aria-valuemin={1} aria-valuemax={total} aria-valuenow={n}>
         {pasos.map((_, i) => <span key={i} class={i < n ? 'hecho' : ''} />)}
       </div>
-      {captura
-        ? <img class="marcador sq" style="margin-top: 24px; object-fit: cover" src={captura} alt="" />
-        : <div class="marcador sq" style="margin-top: 24px">{t('tutorial.captura')}</div>}
-      <h1 class="t-dialogo" style="margin-top: 32px">{p.titulo}</h1>
-      <p class="t-cuerpo" style="margin-top: 12px">{p.texto}</p>
+      {captura && <img class="marcador sq" style="margin-top: 24px; object-fit: contain" src={captura} alt="" />}
+      <h1 class="t-dialogo" style={`margin-top: ${captura ? 32 : 48}px`}>{p.titulo}</h1>
+      <p class="t-cuerpo" style="margin-top: 12px; white-space: pre-line">{p.texto}</p>
       {p.nota && <div class="caja sq t-sec" style="margin-top: 16px; display: block">{p.nota}</div>}
       {n === 2 && (
         <a class="btn sq secundario" style="margin-top: 24px" href={PLANTILLA_COPIA || undefined} target="_blank" rel="noopener noreferrer" aria-disabled={PLANTILLA_COPIA ? undefined : 'true'}>
