@@ -133,3 +133,22 @@ describe('descarga e importación entre Joyeros', () => {
   });
   it('nombre del archivo', () => expect(nombreArchivo(new Date(2026, 9, 18))).toBe('joyero-2026-10-18.html'));
 });
+
+describe('búsqueda tolerante', () => {
+  const J = [
+    { id: 'a', titulo: 'The Elements of Typographic Style', autor: 'Robert Bringhurst', descripcion: '', nota: 'el libro de referencia', tipo: 'libro', temas: ['tipografía'], url: 'https://x.com', fecha: '2026-01-01T00:00:00Z' },
+    { id: 'b', titulo: 'Type Talk', autor: '', descripcion: 'Un podcast sobre fuentes', nota: '', tipo: 'podcast', temas: ['tipografía'], url: 'https://typetalk.fm', fecha: '2026-01-02T00:00:00Z' },
+    { id: 'c', titulo: 'Interaction of Color', autor: 'Josef Albers', descripcion: '', nota: '', tipo: 'libro', temas: ['color'], url: 'https://y.com', fecha: '2026-01-03T00:00:00Z' }
+  ];
+  const base = { busqueda: '', tipos: [], temas: [], porOrganizar: false };
+  const buscar = (q) => filtrar(J, { ...base, busqueda: q }).map((j) => j.id);
+  it('describiendo con palabras vacías', () => expect(buscar('libro sobre tipografía de Bringhurst')).toEqual(['a']));
+  it('principio de palabra y plurales', () => {
+    expect(buscar('tipo')).toEqual(expect.arrayContaining(['a', 'b']));
+    expect(buscar('podcasts')).toEqual(['b']);
+  });
+  it('errores de escritura', () => expect(buscar('tipografai')).toEqual(expect.arrayContaining(['a', 'b'])));
+  it('con tres palabras basta la mitad, y gana quien coincide con más', () => expect(buscar('libro color albers')[0]).toBe('c'));
+  it('no inventa coincidencias', () => expect(buscar('motion')).toEqual([]));
+  it('solo palabras vacías: se usan igualmente', () => expect(buscar('de')).toEqual(['a']));
+});

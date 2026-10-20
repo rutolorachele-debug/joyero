@@ -21,7 +21,7 @@ export function Exportar() {
   const [abierto, setAbierto] = useState(null);
   const [desmarcadas, setDesmarcadas] = useState(() => new Set());
   const cambiar = (nuevo) => setF({ ...f, ...nuevo });
-  const limpiar = () => { setF(SIN_FILTROS); setAbierto(null); };
+  const quitarFiltros = () => setF({ ...f, tipos: [], temas: [], porOrganizar: false });
 
   const hayPorOrganizar = datos.joyas.some(porOrganizar);
   const visibles = useMemo(() => filtrar(datos.joyas, f), [datos.joyas, f]);
@@ -51,7 +51,7 @@ export function Exportar() {
         <input type="search" id="exportar-buscar" value={f.busqueda} placeholder={t('biblioteca.buscar')} enterKeyHint="search"
           onInput={(e) => cambiar({ busqueda: e.currentTarget.value })} />
       </label>
-      <FilaChips f={f} cambiar={cambiar} limpiar={limpiar} hayPorOrganizar={hayPorOrganizar} abierto={abierto} setAbierto={setAbierto} />
+      <FilaChips f={f} cambiar={cambiar} quitarFiltros={quitarFiltros} hayPorOrganizar={hayPorOrganizar} abierto={abierto} setAbierto={setAbierto} />
 
       {visibles.length > 0 && (
         <button type="button" class="enlace" style="margin-top: 24px; align-self: flex-start" onClick={alternarTodas}>

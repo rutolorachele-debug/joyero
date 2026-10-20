@@ -2,13 +2,12 @@ import { useRef } from 'preact/hooks';
 import { ChevronDown, ChevronUp, X } from 'lucide-preact';
 import { t } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
-import { hayFiltros } from '../lib/filtros.js';
 import { Casilla } from './base.jsx';
 import { IconoTipo } from './iconos.jsx';
 
 // Fila de chips «Tipo ▾», «Tema ▾», «Por organizar» con sus menús. La usan Mi joyero (2.1) y Exportar (4.4).
 
-function Desplegable({ etiqueta, opciones, elegidas, onCambiar, conIconos, mostrarLimpiar, onLimpiar, izquierda }) {
+function Desplegable({ etiqueta, opciones, elegidas, onCambiar, conIconos, izquierda }) {
   return (
     <div class="desplegable sq" style={`top: 44px; left: ${izquierda}px`}>
       <div class="opciones" role="listbox" aria-multiselectable="true" aria-label={etiqueta}>
@@ -24,24 +23,28 @@ function Desplegable({ etiqueta, opciones, elegidas, onCambiar, conIconos, mostr
         );
       })}
       </div>
-      {mostrarLimpiar && (
-        <button type="button" class="opcion limpiar" onClick={onLimpiar}>
-          <span style="width: 24px; display: inline-flex; justify-content: center"><X size={18} strokeWidth={2} aria-hidden="true" /></span>
-          <span class="txt">{t('biblioteca.limpiar')}</span>
-        </button>
-      )}
     </div>
   );
 }
 
-/** `extra`: lo que va alineado a la derecha en la misma fila. */
-export function FilaChips({ f, cambiar, limpiar, hayPorOrganizar, abierto, setAbierto, extra }) {
+/**
+ * `quitarFiltros`: lo llama la chip X (a la izquierda), que solo aparece con algún filtro de tipo,
+ * tema o «Por organizar» activo. La búsqueda escrita no se toca.
+ * `extra`: lo que va alineado a la derecha en la misma fila.
+ */
+export function FilaChips({ f, cambiar, quitarFiltros, hayPorOrganizar, abierto, setAbierto, extra }) {
+  const hayActivos = f.tipos.length > 0 || f.temas.length > 0 || f.porOrganizar;
   const { datos } = usarJoyero();
   const refTipo = useRef(null);
   const refTema = useRef(null);
   const posicion = (ref) => (ref.current ? ref.current.offsetLeft : 0);
   return (
-      <div style="position: relative; margin-top: 12px; display: flex; align-items: center; gap: 8px">
+      <div style="position: relative; margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+        {hayActivos && (
+          <button type="button" class="chip chip-x activo sq" aria-label={t('biblioteca.quitarFiltros')} onClick={() => { setAbierto(null); quitarFiltros(); }}>
+            <X size={16} strokeWidth={2.5} aria-hidden="true" />
+          </button>
+        )}
         <button type="button" ref={refTipo} class={`chip chip-flecha sq${f.tipos.length ? ' activo' : ''}`} aria-expanded={abierto === 'tipo' ? 'true' : 'false'} aria-haspopup="listbox"
           onClick={() => setAbierto(abierto === 'tipo' ? null : 'tipo')}>
           {t('biblioteca.tipo')}
@@ -61,11 +64,11 @@ export function FilaChips({ f, cambiar, limpiar, hayPorOrganizar, abierto, setAb
         {abierto && <div class="capa-transparente" onClick={() => setAbierto(null)} />}
         {abierto === 'tipo' && (
           <Desplegable etiqueta={t('biblioteca.tipo')} opciones={datos.tipos} elegidas={f.tipos} conIconos
-            izquierda={posicion(refTipo)} onCambiar={(tipos) => cambiar({ tipos })} mostrarLimpiar={hayFiltros(f)} onLimpiar={limpiar} />
+            izquierda={posicion(refTipo)} onCambiar={(tipos) => cambiar({ tipos })} />
         )}
         {abierto === 'tema' && (
           <Desplegable etiqueta={t('biblioteca.tema')} opciones={datos.temas.map((nombre) => ({ nombre }))} elegidas={f.temas}
-            izquierda={Math.max(0, posicion(refTema) - 60)} onCambiar={(temas) => cambiar({ temas })} mostrarLimpiar={hayFiltros(f)} onLimpiar={limpiar} />
+            izquierda={Math.max(0, posicion(refTema) - 60)} onCambiar={(temas) => cambiar({ temas })} />
         )}
       </div>
   );

@@ -191,6 +191,7 @@ a { color: inherit; }
 .chip .ci { width: 22px; height: 22px; border-radius: 999px; background: #fff; color: #000; display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .chip.activo .ci { background: #000; color: #fff; }
 .chip-flecha { gap: 4px; }
+.chip-x { width: 36px; padding: 0; justify-content: center; }
 .etiqueta { height: 22px; padding: 0 8px; border-radius: 8px; background: var(--sup2); color: var(--texto); font-size: 12px; line-height: 22px; font-weight: 500; white-space: nowrap; }
 .etiquetas { display: flex; flex-wrap: wrap; gap: 4px; }
 
@@ -207,7 +208,6 @@ a { color: inherit; }
   color: var(--texto); font-size: 14px; line-height: 20px; font-weight: 500; text-align: left; width: 100%; border-radius: 12px;
 }
 .opcion > .txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.opcion.limpiar { margin-top: 4px; font-weight: 600; }
 
 /* casilla */
 .casilla { width: 24px; height: 24px; border-radius: 8px; flex: none; display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid var(--gris-icono); color: #000; }

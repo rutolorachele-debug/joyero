@@ -35,7 +35,7 @@ export function esUrlValida(s) {
   return /^https?:\/\/[^\s/]+\.[^\s]+$/i.test(String(s || '').trim());
 }
 
-function distancia(a, b) {
+export function distancia(a, b) {
   if (a === b) return 0;
   if (!a.length) return b.length;
   if (!b.length) return a.length;

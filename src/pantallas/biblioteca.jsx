@@ -24,7 +24,13 @@ export function Biblioteca() {
   // Si ya no quedan joyas por organizar, la chip desaparece y su filtro deja de aplicarse.
   const f = hayPorOrganizar ? fGuardado : { ...fGuardado, porOrganizar: false };
   const cambiar = (nuevo) => { filtrosGuardados = { ...f, ...nuevo }; setF(filtrosGuardados); };
-  const limpiar = () => { filtrosGuardados = { busqueda: '', tipos: [], temas: [], porOrganizar: false }; setF(filtrosGuardados); setAbierto(null); };
+  // Chip X: quita tipo, tema y «Por organizar» (no la búsqueda) y vuelve arriba, a Fijados y la lista entera.
+  const quitarFiltros = () => {
+    filtrosGuardados = { ...f, tipos: [], temas: [], porOrganizar: false };
+    setF(filtrosGuardados);
+    setAbierto(null);
+    window.scrollTo(0, 0);
+  };
 
   const visibles = useMemo(() => filtrar(datos.joyas, f), [datos.joyas, f]);
   const filtrosActivos = hayFiltros(f);
@@ -95,7 +101,7 @@ export function Biblioteca() {
           onInput={(e) => cambiar({ busqueda: e.currentTarget.value })} />
       </label>
 
-      <FilaChips f={f} cambiar={cambiar} limpiar={limpiar} hayPorOrganizar={hayPorOrganizar} abierto={abierto} setAbierto={setAbierto}
+      <FilaChips f={f} cambiar={cambiar} quitarFiltros={quitarFiltros} hayPorOrganizar={hayPorOrganizar} abierto={abierto} setAbierto={setAbierto}
         extra={hayFiltroFijable && (
           <button type="button" class={`chip chip-fijar sq${actualFijado ? ' activo' : ''}`} aria-pressed={actualFijado ? 'true' : 'false'} onClick={alternarFijar}>
             {actualFijado ? t('fijados.fijado') : t('fijados.fijar')}

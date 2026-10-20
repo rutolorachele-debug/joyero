@@ -5,7 +5,7 @@ import { t } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
 import { navegar, volver } from '../ruta.js';
 import { completarUrl, esUrlValida, nuevoId } from '../lib/texto.js';
-import { ErrorJoyero } from '../lib/api.js';
+import { ErrorJoyero, conReintentos } from '../lib/api.js';
 import { Boton, BotonAtras, BotonCerrar, BotonIcono, BarraInferior, Campo, Dialogo, IconoJoya } from '../componentes/base.jsx';
 import { SelectorTipo, SelectorTemas } from '../componentes/categorias.jsx';
 
@@ -88,7 +88,12 @@ export function Formulario({ id }) {
     setError('');
     const enviar = { ...actual.current, url: urlFinal };
     try {
-      const r = await api('guardar', { joya: enviar, forzar, idNuevo: editando ? undefined : idNuevo.current });
+      // Si Google tarda o falla, se reintenta solo (hasta 3 intentos). No crea duplicados:
+      // una joya nueva lleva siempre el mismo idNuevo y el script la reconoce si ya llegó.
+      const r = await conReintentos(
+        () => api('guardar', { joya: enviar, forzar, idNuevo: editando ? undefined : idNuevo.current }, { tiempo: 25000 }),
+        3, [1500, 4000]
+      );
       ponerJoya(r.joya);
       if (editando) volver(`/joya/${id}`);
       else navegar('/', { reemplazar: true });

@@ -1,4 +1,4 @@
-import { normalizar } from './texto.js';
+import { palabrasBusqueda, puntuarJoya } from './busqueda.js';
 
 export function porOrganizar(j) {
   return !j.tipo || !j.temas || j.temas.length === 0;
@@ -9,25 +9,30 @@ export function hayFiltros(f) {
 }
 
 /**
- * Busca en título, autor, descripción, nota y temas. Cada palabra escrita tiene que aparecer.
  * Tipos y temas elegidos: basta con uno de cada grupo. Los grupos se combinan entre sí y con la búsqueda.
+ * Sin búsqueda: de la más reciente a la menos reciente. Con búsqueda: primero las que mejor coinciden.
  */
 export function filtrar(joyas, f) {
-  const palabras = normalizar(f.busqueda).split(' ').filter(Boolean);
+  const palabras = palabrasBusqueda(f.busqueda);
   const tipos = new Set(f.tipos);
   const temas = new Set(f.temas);
-  return joyas
-    .filter((j) => {
-      if (f.porOrganizar && !porOrganizar(j)) return false;
-      if (tipos.size && !tipos.has(j.tipo)) return false;
-      if (temas.size && !(j.temas || []).some((t) => temas.has(t))) return false;
-      if (palabras.length) {
-        const texto = ' ' + normalizar([j.titulo, j.autor, j.descripcion, j.nota, (j.temas || []).join(' ')].join(' ')) + ' ';
-        if (!palabras.every((p) => texto.includes(p))) return false;
-      }
-      return true;
-    })
-    .sort(ordenFecha);
+  const puntos = new Map();
+  const r = joyas.filter((j) => {
+    if (f.porOrganizar && !porOrganizar(j)) return false;
+    if (tipos.size && !tipos.has(j.tipo)) return false;
+    if (temas.size && !(j.temas || []).some((t) => temas.has(t))) return false;
+    if (palabras.length) {
+      const p = puntuarJoya(j, palabras);
+      if (!p) return false;
+      puntos.set(j, p);
+    }
+    return true;
+  });
+  if (!palabras.length) return r.sort(ordenFecha);
+  return r.sort((a, b) => {
+    const pa = puntos.get(a), pb = puntos.get(b);
+    return (pb.n - pa.n) || (pb.puntos - pa.puntos) || ordenFecha(a, b);
+  });
 }
 
 export function ordenFecha(a, b) {

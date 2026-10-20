@@ -83,7 +83,7 @@ export default {
     tipo: 'Tipo',
     tema: 'Tema',
     porOrganizar: 'Por organizar',
-    limpiar: 'Limpiar filtros',
+    quitarFiltros: 'Quitar filtros', // PROVISIONAL (solo lector de pantalla)
     anadir: 'Añadir',
     vacia: 'Todavía no tienes joyas. Toca + para guardar la primera.', // PROVISIONAL
     sinResultados: 'Ninguna joya coincide con tu búsqueda.' // PROVISIONAL
