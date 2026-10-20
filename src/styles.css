@@ -310,3 +310,11 @@ a { color: inherit; }
 .negritas-blancas b { color: var(--texto); font-weight: 600; }
 a.btn[aria-disabled='true'] { background: var(--desactivado); color: var(--desactivado-texto); pointer-events: none; }
 .resumen > div { font-size: 16px; line-height: 22px; font-weight: 500; }
+
+/* ───────── Fijados ───────── */
+.chip-fijar { margin-left: auto; gap: 6px; }
+.seccion-cab { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.t-seccion { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--texto2); }
+.fila-boton { border: 0; background: none; width: 100%; text-align: left; font: inherit; padding-left: 0; padding-right: 0; }
+.quitar { width: 44px; height: 44px; margin-right: -10px; border: 0; background: none; color: var(--rojo); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.bi.activo > span { background: var(--primario); color: #000; }

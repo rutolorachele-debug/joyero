@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Check, X, Trash2, ExternalLink, Pencil } from 'lucide-preact';
+import { Check, X, Trash2, ExternalLink, Pencil, Pin } from 'lucide-preact';
+import { leerFijados, guardarFijados } from '../lib/fijados.js';
 import { t } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
 import { navegar, volver } from '../ruta.js';
@@ -175,11 +176,22 @@ export function Detalle({ id }) {
   const { datos, hayDatos } = usarJoyero();
   const j = datos.joyas.find((x) => x.id === id);
   useEffect(() => { if (hayDatos && !j) navegar('/', { reemplazar: true }); }, [hayDatos, j]);
+  const [fijados, setFijados] = useState(leerFijados);
   if (!j) return <main class="columna" />;
+  const fijada = fijados.joyas.includes(id);
+  const alternar = () => {
+    const nuevo = { ...fijados, joyas: fijada ? fijados.joyas.filter((x) => x !== id) : [id].concat(fijados.joyas) };
+    guardarFijados(nuevo);
+    setFijados(nuevo);
+  };
   return (
     <main class="columna sin-barra">
       <div class="cabecera" style="margin: 0 -6px">
         <BotonAtras onClick={() => volver('/')} />
+        <span style="flex: 1" />
+        <button type="button" style="margin-right: -12px" class={`bi${fijada ? ' activo' : ''}`} aria-pressed={fijada ? 'true' : 'false'} aria-label={t(fijada ? 'fijados.quitarJoya' : 'fijados.fijarJoya')} onClick={alternar}>
+          <span><Pin size={16} strokeWidth={2.25} fill={fijada ? 'currentColor' : 'none'} aria-hidden="true" /></span>
+        </button>
         <BotonIcono etiqueta={t('detalle.editar')} onClick={() => navegar(`/joya/${id}/editar`)}>
           <Pencil size={16} strokeWidth={2.25} aria-hidden="true" />
         </BotonIcono>

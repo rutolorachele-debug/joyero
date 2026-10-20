@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { Settings, Search, ChevronDown, ChevronUp, Download, Plus, Upload, X } from 'lucide-preact';
+import { Settings, Search, ChevronDown, ChevronUp, ChevronRight, Plus, Upload, X, Pin, Pencil, ListFilter, MinusCircle } from 'lucide-preact';
 import { t } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
 import { navegar } from '../ruta.js';
 import { filtrar, hayFiltros, porOrganizar } from '../lib/filtros.js';
-import { crearArchivoFavoritos, nombreArchivo, descargarTexto } from '../lib/favoritos.js';
+import { leerFijados, guardarFijados, mismoFiltro, nombreFiltro } from '../lib/fijados.js';
 import { claveError } from '../lib/api.js';
 import { BotonIcono, Casilla, IconoJoya, EsqueletoLista, Panel, Aviso } from '../componentes/base.jsx';
 import { IconoTipo } from '../componentes/iconos.jsx';
@@ -55,7 +55,19 @@ export function Biblioteca() {
   const visibles = useMemo(() => filtrar(datos.joyas, f), [datos.joyas, f]);
   const filtrosActivos = hayFiltros(f);
 
-  const descargar = () => descargarTexto(crearArchivoFavoritos(visibles, t('biblioteca.porOrganizar')), nombreArchivo());
+  // Fijados (boceto: se guardan en este navegador; en la versión final irán al Sheet).
+  const [fijados, setFijados] = useState(leerFijados);
+  const [editandoFijados, setEditandoFijados] = useState(false);
+  const cambiarFijados = (nuevo) => { guardarFijados(nuevo); setFijados(nuevo); };
+  const filtroActual = { tipos: f.tipos, temas: f.temas };
+  const hayFiltroFijable = f.tipos.length > 0 || f.temas.length > 0;
+  const actualFijado = hayFiltroFijable && fijados.filtros.some((x) => mismoFiltro(x, filtroActual));
+  const alternarFijar = () => cambiarFijados(actualFijado
+    ? { ...fijados, filtros: fijados.filtros.filter((x) => !mismoFiltro(x, filtroActual)) }
+    : { ...fijados, filtros: [filtroActual].concat(fijados.filtros) });
+  const joyasFijadas = fijados.joyas.map((id) => datos.joyas.find((j) => j.id === id)).filter(Boolean);
+  const verFijados = !filtrosActivos && (fijados.filtros.length > 0 || joyasFijadas.length > 0);
+  const tipoIcono = (fl) => (fl.tipos.length === 1 ? (datos.tipos.find((x) => x.nombre === fl.tipos[0]) || {}).icono : null);
 
   const posicion = (ref) => (ref.current ? ref.current.offsetLeft : 0);
 
@@ -118,9 +130,12 @@ export function Biblioteca() {
           <button type="button" class={`chip sq${f.porOrganizar ? ' activo' : ''}`} aria-pressed={f.porOrganizar ? 'true' : 'false'}
             onClick={() => cambiar({ porOrganizar: !f.porOrganizar })}>{t('biblioteca.porOrganizar')}</button>
         )}
-        <button type="button" class="btn-descarga sq" aria-label={t('biblioteca.descargar')} onClick={descargar} disabled={!visibles.length}>
-          <Download size={18} strokeWidth={2.25} aria-hidden="true" />
-        </button>
+        {hayFiltroFijable && (
+          <button type="button" class={`chip chip-fijar sq${actualFijado ? ' activo' : ''}`} aria-pressed={actualFijado ? 'true' : 'false'} onClick={alternarFijar}>
+            {actualFijado ? t('fijados.fijado') : t('fijados.fijar')}
+            <Pin size={14} strokeWidth={2.5} fill={actualFijado ? 'currentColor' : 'none'} aria-hidden="true" />
+          </button>
+        )}
 
         {abierto && <div class="capa-transparente" onClick={() => setAbierto(null)} />}
         {abierto === 'tipo' && (
@@ -141,7 +156,64 @@ export function Biblioteca() {
         </div>
       )}
 
-      <div style="margin-top: 20px">
+      {hayDatos && verFijados && (
+        <section style="margin-top: 20px" aria-label={t('fijados.titulo')}>
+          <div class="seccion-cab">
+            <h2 class="t-seccion">{t('fijados.titulo')}</h2>
+            <button type="button" class="bi der" aria-label={editandoFijados ? t('fijados.terminar') : t('fijados.editar')} onClick={() => setEditandoFijados(!editandoFijados)}>
+              <span>{editandoFijados ? <X size={16} strokeWidth={2.25} aria-hidden="true" /> : <Pencil size={16} strokeWidth={2.25} aria-hidden="true" />}</span>
+            </button>
+          </div>
+          <div class="lista">
+            {fijados.filtros.map((fl) => {
+              const n = filtrar(datos.joyas, { busqueda: '', porOrganizar: false, ...fl }).length;
+              const icono = tipoIcono(fl);
+              const contenido = (
+                <>
+                  <span class="circulo c28">{icono ? <IconoTipo nombre={icono} size={16} /> : <ListFilter size={16} strokeWidth={2.25} aria-hidden="true" />}</span>
+                  <span class="crece"><span class="t-fuerte">{nombreFiltro(fl)}</span><span class="t-sec">{n === 1 ? t('comun.joya1') : t('comun.joyas', { n })}</span></span>
+                </>
+              );
+              return editandoFijados ? (
+                <div class="fila-lista" key={nombreFiltro(fl)}>
+                  {contenido}
+                  <button type="button" class="quitar" aria-label={t('fijados.quitar', { nombre: nombreFiltro(fl) })}
+                    onClick={() => cambiarFijados({ ...fijados, filtros: fijados.filtros.filter((x) => !mismoFiltro(x, fl)) })}>
+                    <MinusCircle size={22} strokeWidth={2} aria-hidden="true" />
+                  </button>
+                </div>
+              ) : (
+                <button type="button" class="fila-lista fila-boton" key={nombreFiltro(fl)} onClick={() => cambiar({ tipos: fl.tipos, temas: fl.temas, busqueda: '', porOrganizar: false })}>
+                  {contenido}
+                  <ChevronRight size={20} strokeWidth={2.5} color="var(--gris-icono)" aria-hidden="true" />
+                </button>
+              );
+            })}
+            {joyasFijadas.map((j) => (editandoFijados ? (
+              <div class="card" key={j.id} style="align-items: center">
+                <IconoJoya joya={j} tipos={datos.tipos} />
+                <div class="cuerpo"><div class="titulo">{j.titulo}</div>{j.autor && <div class="autor">{j.autor}</div>}</div>
+                <button type="button" class="quitar" aria-label={t('fijados.quitar', { nombre: j.titulo })}
+                  onClick={() => cambiarFijados({ ...fijados, joyas: fijados.joyas.filter((x) => x !== j.id) })}>
+                  <MinusCircle size={22} strokeWidth={2} aria-hidden="true" />
+                </button>
+              </div>
+            ) : (
+              <a class="card" href={`#/joya/${j.id}`} key={j.id} onClick={(e) => { e.preventDefault(); navegar(`/joya/${j.id}`); }}>
+                <IconoJoya joya={j} tipos={datos.tipos} />
+                <div class="cuerpo">
+                  <div class="titulo">{j.titulo}</div>
+                  {j.autor && <div class="autor">{j.autor}</div>}
+                  {j.temas && j.temas.length > 0 && <div class="etiquetas">{j.temas.map((x) => <span class="etiqueta sq" key={x}>{x}</span>)}</div>}
+                </div>
+              </a>
+            )))}
+          </div>
+          <h2 class="t-seccion" style="margin-top: 32px">{t('fijados.todas')}</h2>
+        </section>
+      )}
+
+      <div style={`margin-top: ${verFijados ? 8 : 20}px`}>
         {!hayDatos && cargando && <EsqueletoLista />}
         {hayDatos && visibles.length > 0 && (
           <div class="lista">

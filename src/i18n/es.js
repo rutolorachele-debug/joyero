@@ -90,6 +90,18 @@ export default {
     sinResultados: 'Ninguna joya coincide con tu búsqueda.' // PROVISIONAL
   },
 
+  fijados: {
+    titulo: 'Fijados', // PROVISIONAL
+    todas: 'Todas las joyas', // PROVISIONAL
+    fijar: 'Fijar',
+    fijado: 'Fijado', // PROVISIONAL
+    editar: 'Editar fijados', // PROVISIONAL
+    terminar: 'Terminar', // PROVISIONAL
+    quitar: 'Quitar {nombre} de fijados', // PROVISIONAL
+    fijarJoya: 'Fijar joya', // PROVISIONAL
+    quitarJoya: 'Quitar de fijados' // PROVISIONAL
+  },
+
   menuMas: {
     anadir: 'Añadir joya',
     anadirSub: 'Pega un link',
