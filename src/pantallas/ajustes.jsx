@@ -41,7 +41,7 @@ export function Ajustes() {
     }
   };
   return (
-    <main class="columna">
+    <main class="columna sin-barra">
       <div class="cabecera solo-izq"><BotonAtras onClick={() => volver('/')} /></div>
       <h1 class="t-display titulo-bajo">{t('ajustes.titulo')}</h1>
       <div style="margin-top: 48px; display: flex; flex-direction: column; gap: 24px">

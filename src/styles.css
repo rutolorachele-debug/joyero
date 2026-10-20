@@ -58,6 +58,15 @@ a { color: inherit; }
   display: flex;
   flex-direction: column;
 }
+/* 2.1: título fijo arriba; búsqueda y chips se esconden al bajar y vuelven al subir */
+.columna.cabecera-fija { padding-top: 0; }
+.barra-titulo { position: sticky; top: 0; z-index: 12; background: var(--fondo); padding-top: var(--arriba); padding-bottom: 12px; }
+.barra-filtros {
+  position: sticky; z-index: 11; background: var(--fondo); padding: 12px 0;
+  transition: transform 0.25s ease;
+}
+.barra-filtros.oculta { transform: translateY(-100%); }
+@media (prefers-reduced-motion: reduce) { .barra-filtros { transition: none; } }
 .columna.sin-barra { padding-bottom: calc(var(--abajo) + 24px); }
 
 /* elementos fijos alineados a la columna, no a la ventana */

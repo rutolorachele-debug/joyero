@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Settings, Search, ChevronDown, ChevronUp, Download, Plus, Upload, X } from 'lucide-preact';
 import { t } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
@@ -59,16 +59,44 @@ export function Biblioteca() {
 
   const posicion = (ref) => (ref.current ? ref.current.offsetLeft : 0);
 
+  // Cabecera: el título queda siempre fijo; búsqueda y chips se esconden al bajar y vuelven al subir.
+  const refTitulo = useRef(null);
+  const refFiltros = useRef(null);
+  const [altoTitulo, setAltoTitulo] = useState(0);
+  const [filtrosOcultos, setFiltrosOcultos] = useState(false);
+  useEffect(() => {
+    const medir = () => { if (refTitulo.current) setAltoTitulo(refTitulo.current.offsetHeight); };
+    medir();
+    window.addEventListener('resize', medir);
+    let ultimo = window.scrollY;
+    const alDesplazar = () => {
+      const y = window.scrollY;
+      const zona = refFiltros.current;
+      const dentro = zona && zona.contains(document.activeElement) && document.activeElement !== document.body;
+      if (y <= 8 || dentro) setFiltrosOcultos(false);
+      else if (y > ultimo + 6) setFiltrosOcultos(true);
+      else if (y < ultimo - 6) setFiltrosOcultos(false);
+      if (Math.abs(y - ultimo) > 6 || y <= 8) ultimo = y;
+    };
+    window.addEventListener('scroll', alDesplazar, { passive: true });
+    return () => { window.removeEventListener('resize', medir); window.removeEventListener('scroll', alDesplazar); };
+  }, []);
+  useEffect(() => { if (filtrosOcultos) setAbierto(null); }, [filtrosOcultos]);
+
   return (
-    <main class="columna">
-      <div class="cabecera">
-        <h1 class="t-display">{t('biblioteca.titulo')}</h1>
-        <BotonIcono etiqueta={t('biblioteca.ajustes')} onClick={() => navegar('/ajustes')} der>
-          <Settings size={18} strokeWidth={2.25} aria-hidden="true" />
-        </BotonIcono>
+    <main class="columna cabecera-fija">
+      <div class="barra-titulo" ref={refTitulo}>
+        <div class="cabecera">
+          <h1 class="t-display">{t('biblioteca.titulo')}</h1>
+          <BotonIcono etiqueta={t('biblioteca.ajustes')} onClick={() => navegar('/ajustes')} der>
+            <Settings size={18} strokeWidth={2.25} aria-hidden="true" />
+          </BotonIcono>
+        </div>
       </div>
 
-      <label class="buscador sq" style="margin-top: 24px">
+      <div class={`barra-filtros${filtrosOcultos ? ' oculta' : ''}`} ref={refFiltros} style={`top: ${altoTitulo}px`}
+        onFocusIn={() => setFiltrosOcultos(false)}>
+      <label class="buscador sq">
         <Search size={20} strokeWidth={2.25} aria-hidden="true" />
         <span class="oculto">{t('biblioteca.buscarEtiqueta')}</span>
         <input type="search" value={f.busqueda} placeholder={t('biblioteca.buscar')} enterKeyHint="search"
@@ -104,6 +132,7 @@ export function Biblioteca() {
             izquierda={Math.max(0, posicion(refTema) - 60)} onCambiar={(temas) => cambiar({ temas })} mostrarLimpiar={filtrosActivos} onLimpiar={limpiar} />
         )}
       </div>
+      </div>
 
       {errorCarga && (
         <div style="margin-top: 24px">
@@ -112,7 +141,7 @@ export function Biblioteca() {
         </div>
       )}
 
-      <div style="margin-top: 32px">
+      <div style="margin-top: 20px">
         {!hayDatos && cargando && <EsqueletoLista />}
         {hayDatos && visibles.length > 0 && (
           <div class="lista">
