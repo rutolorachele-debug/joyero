@@ -308,7 +308,8 @@ a.btn[aria-disabled='true'] { background: var(--desactivado); color: var(--desac
 .resumen > div { font-size: 16px; line-height: 22px; font-weight: 500; }
 
 /* ───────── Fijados ───────── */
-.chip-fijar { margin-left: auto; gap: 6px; }
+.chip-fijar { gap: 6px; }
+.fila-resultados { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
 .seccion-cab { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
 .t-seccion { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--texto2); }
 .fila-boton { border: 0; background: none; width: 100%; text-align: left; font: inherit; padding-left: 0; padding-right: 0; }

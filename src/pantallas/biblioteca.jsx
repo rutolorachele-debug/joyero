@@ -101,14 +101,18 @@ export function Biblioteca() {
           onInput={(e) => cambiar({ busqueda: e.currentTarget.value })} />
       </label>
 
-      <FilaChips f={f} cambiar={cambiar} quitarFiltros={quitarFiltros} hayPorOrganizar={hayPorOrganizar} abierto={abierto} setAbierto={setAbierto}
-        extra={hayFiltroFijable && (
+      <FilaChips f={f} cambiar={cambiar} quitarFiltros={quitarFiltros} hayPorOrganizar={hayPorOrganizar} abierto={abierto} setAbierto={setAbierto} />
+      </div>
+
+      {hayDatos && hayFiltroFijable && (
+        <div class="fila-resultados">
+          <span class="t-sec">{visibles.length === 1 ? t('comun.joya1') : t('comun.joyas', { n: visibles.length })}</span>
           <button type="button" class={`chip chip-fijar sq${actualFijado ? ' activo' : ''}`} aria-pressed={actualFijado ? 'true' : 'false'} onClick={alternarFijar}>
             {actualFijado ? t('fijados.fijado') : t('fijados.fijar')}
             <Pin size={14} strokeWidth={2.5} fill={actualFijado ? 'currentColor' : 'none'} aria-hidden="true" />
           </button>
-        )} />
-      </div>
+        </div>
+      )}
 
       {errorCarga && (
         <div style="margin-top: 24px">

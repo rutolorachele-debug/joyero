@@ -30,9 +30,8 @@ function Desplegable({ etiqueta, opciones, elegidas, onCambiar, conIconos, izqui
 /**
  * `quitarFiltros`: lo llama la chip X (a la izquierda), que solo aparece con algún filtro de tipo,
  * tema o «Por organizar» activo. La búsqueda escrita no se toca.
- * `extra`: lo que va alineado a la derecha en la misma fila.
  */
-export function FilaChips({ f, cambiar, quitarFiltros, hayPorOrganizar, abierto, setAbierto, extra }) {
+export function FilaChips({ f, cambiar, quitarFiltros, hayPorOrganizar, abierto, setAbierto }) {
   const hayActivos = f.tipos.length > 0 || f.temas.length > 0 || f.porOrganizar;
   const { datos } = usarJoyero();
   const refTipo = useRef(null);
@@ -59,7 +58,6 @@ export function FilaChips({ f, cambiar, quitarFiltros, hayPorOrganizar, abierto,
           <button type="button" class={`chip sq${f.porOrganizar ? ' activo' : ''}`} aria-pressed={f.porOrganizar ? 'true' : 'false'}
             onClick={() => cambiar({ porOrganizar: !f.porOrganizar })}>{t('biblioteca.porOrganizar')}</button>
         )}
-        {extra}
 
         {abierto && <div class="capa-transparente" onClick={() => setAbierto(null)} />}
         {abierto === 'tipo' && (
