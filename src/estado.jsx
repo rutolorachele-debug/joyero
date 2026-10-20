@@ -3,11 +3,14 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'preact/hoo
 import { llamar, ErrorJoyero } from './lib/api.js';
 import { leerCodigo } from './lib/codigo.js';
 import * as almacen from './lib/almacen.js';
+import { SIN_FIJADOS, aplicarFijado } from './lib/fijados.js';
 
 const Contexto = createContext(null);
 export const usarJoyero = () => useContext(Contexto);
 
-const VACIO = { joyas: [], tipos: [], temas: [] };
+const VACIO = { joyas: [], tipos: [], temas: [], fijados: SIN_FIJADOS };
+
+const desdeRespuesta = (r) => ({ joyas: r.joyas || [], tipos: r.tipos || [], temas: r.temas || [], fijados: r.fijados || SIN_FIJADOS });
 
 function claveCache(codigo) {
   const c = leerCodigo(codigo);
@@ -40,7 +43,7 @@ export function ProveedorJoyero({ children }) {
     try {
       const r = await llamar(codigo, 'leer', {});
       if (n !== pedido.current) return;
-      const nuevos = { joyas: r.joyas || [], tipos: r.tipos || [], temas: r.temas || [] };
+      const nuevos = desdeRespuesta(r);
       setDatos(nuevos);
       almacen.guardar(claveCache(codigo), nuevos);
       setErrorCarga(null);
@@ -69,7 +72,7 @@ export function ProveedorJoyero({ children }) {
     const c = leerCodigo(texto);
     if (!c) throw new ErrorJoyero('formato');
     const r = await llamar(c, 'leer', {}, { tiempo: 30000 });
-    const nuevos = { joyas: r.joyas || [], tipos: r.tipos || [], temas: r.temas || [] };
+    const nuevos = desdeRespuesta(r);
     almacen.guardar('codigo', c.codigo);
     almacen.guardar(claveCache(c.codigo), nuevos);
     setDatos(nuevos);
@@ -87,7 +90,7 @@ export function ProveedorJoyero({ children }) {
   }, [codigo]);
 
   /* Cambios locales tras una respuesta correcta del script */
-  const d = datos || VACIO;
+  const d = datos ? { ...VACIO, ...datos } : VACIO;
   const ponerJoya = useCallback((joya) => {
     const joyas = d.joyas.filter((j) => j.id !== joya.id).concat([joya]);
     const tipos = joya.tipo && !d.tipos.some((x) => x.nombre === joya.tipo) ? d.tipos.concat([{ nombre: joya.tipo, icono: 'gem' }]) : d.tipos;
@@ -96,12 +99,28 @@ export function ProveedorJoyero({ children }) {
   }, [d, guardarDatos]);
 
   const quitarJoya = useCallback((id) => {
-    guardarDatos({ ...d, joyas: d.joyas.filter((j) => j.id !== id) });
+    guardarDatos({ ...d, joyas: d.joyas.filter((j) => j.id !== id), fijados: aplicarFijado(d.fijados, { clase: 'joya', id }, false) });
   }, [d, guardarDatos]);
+
+  /**
+   * Fijar o quitar (joya o filtro). Cambia en pantalla al momento; si el script falla,
+   * vuelve a como estaba y lanza el error.
+   */
+  const fijar = useCallback(async (dato, poner) => {
+    const antes = d.fijados || SIN_FIJADOS;
+    guardarDatos({ ...d, fijados: aplicarFijado(antes, dato, poner) });
+    try {
+      const r = await llamar(codigo, poner ? 'fijar' : 'desfijar', dato);
+      if (r.fijados) setDatos((x) => { const nuevos = { ...(x || VACIO), fijados: r.fijados }; almacen.guardar(claveCache(codigo), nuevos); return nuevos; });
+    } catch (e) {
+      setDatos((x) => { const nuevos = { ...(x || VACIO), fijados: antes }; almacen.guardar(claveCache(codigo), nuevos); return nuevos; });
+      throw e;
+    }
+  }, [d, codigo, guardarDatos]);
 
   const valor = {
     codigo, datos: d, hayDatos: !!datos, cargando, errorCarga,
-    api, recargar, entrar, salir, guardarDatos, ponerJoya, quitarJoya
+    api, recargar, entrar, salir, guardarDatos, ponerJoya, quitarJoya, fijar
   };
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

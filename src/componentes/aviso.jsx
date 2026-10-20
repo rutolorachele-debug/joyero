@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import { Pin } from 'lucide-preact';
+import { Pin, PinOff } from 'lucide-preact';
 
-// Aviso breve abajo («Joya fijada»). Uno a la vez; desaparece solo.
-const DURACION = 2400;
+// Aviso breve: etiqueta pequeña abajo, centrada en la columna («Joya fijada»). Uno a la vez; desaparece solo.
+// No es un botón: no se puede tocar.
+const DURACION = 2200;
 let escuchar = null;
 
 export function mostrarAvisoBreve(texto, icono = 'pin') {
@@ -25,9 +26,10 @@ export function AvisoBreve() {
   return (
     <div class="fijo zona-aviso" role="status" aria-live="polite">
       {aviso && (
-        <div class={`aviso-breve sq${visible ? ' visible' : ''}`} key={aviso.id}>
+        <div class={`aviso-breve sq${visible ? ' visible' : ''}${aviso.icono === 'error' ? ' error' : ''}`} key={aviso.id}>
+          {aviso.icono === 'pin' && <Pin size={14} strokeWidth={2.25} fill="currentColor" aria-hidden="true" />}
+          {aviso.icono === 'pin-off' && <PinOff size={14} strokeWidth={2.25} aria-hidden="true" />}
           <span>{aviso.texto}</span>
-          {aviso.icono === 'pin' && <Pin size={18} strokeWidth={2.25} fill="currentColor" aria-hidden="true" />}
         </div>
       )}
     </div>

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Check, X, Trash2, ExternalLink, Pencil, Pin } from 'lucide-preact';
-import { leerFijados, guardarFijados } from '../lib/fijados.js';
 import { mostrarAvisoBreve } from '../componentes/aviso.jsx';
 import { t } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
@@ -174,17 +173,18 @@ export function Formulario({ id }) {
 
 /* 2.5 Detalle de joya (solo lectura) */
 export function Detalle({ id }) {
-  const { datos, hayDatos } = usarJoyero();
+  const { datos, hayDatos, fijar } = usarJoyero();
   const j = datos.joyas.find((x) => x.id === id);
   useEffect(() => { if (hayDatos && !j) navegar('/', { reemplazar: true }); }, [hayDatos, j]);
-  const [fijados, setFijados] = useState(leerFijados);
   if (!j) return <main class="columna" />;
-  const fijada = fijados.joyas.includes(id);
-  const alternar = () => {
-    const nuevo = { ...fijados, joyas: fijada ? fijados.joyas.filter((x) => x !== id) : [id].concat(fijados.joyas) };
-    guardarFijados(nuevo);
-    setFijados(nuevo);
-    mostrarAvisoBreve(t(fijada ? 'fijados.joyaQuitada' : 'fijados.joyaFijada'), fijada ? null : 'pin');
+  const fijada = (datos.fijados.joyas || []).includes(id);
+  const alternar = async () => {
+    mostrarAvisoBreve(t(fijada ? 'fijados.joyaQuitada' : 'fijados.joyaFijada'), fijada ? 'pin-off' : 'pin');
+    try {
+      await fijar({ clase: 'joya', id }, !fijada);
+    } catch (e) {
+      mostrarAvisoBreve(errorGuardar(e), 'error');
+    }
   };
   return (
     <main class="columna sin-barra">

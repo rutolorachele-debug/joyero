@@ -100,7 +100,9 @@ export default {
     fijarJoya: 'Fijar joya',
     quitarJoya: 'Quitar de fijados',
     joyaFijada: 'Joya fijada',
-    joyaQuitada: 'Joya quitada de fijados' // PROVISIONAL
+    joyaQuitada: 'Joya quitada de fijados',
+    filtroFijado: 'Filtro fijado',
+    filtroQuitado: 'Filtro quitado de fijados'
   },
 
   menuMas: {

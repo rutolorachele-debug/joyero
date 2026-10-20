@@ -4,6 +4,7 @@ import { t, nJoyas } from '../i18n/index.js';
 import { usarJoyero } from '../estado.jsx';
 import { navegar, volver } from '../ruta.js';
 import { contar } from '../lib/filtros.js';
+import { cambiarCategoriaEnFijados } from '../lib/fijados.js';
 import { normalizar, nombreValido } from '../lib/texto.js';
 import { claveError } from '../lib/api.js';
 import { Boton, BotonAtras, BotonIcono, Dialogo } from '../componentes/base.jsx';
@@ -118,9 +119,10 @@ export function Categorias() {
       const joyas = datos.joyas.map((j) => (pestana === 'tipo'
         ? (j.tipo === viejo ? { ...j, tipo: nuevo } : j)
         : ((j.temas || []).includes(viejo) ? { ...j, temas: j.temas.map((x) => (x === viejo ? nuevo : x)) } : j)));
+      const fijados = cambiarCategoriaEnFijados(datos.fijados, pestana, viejo, nuevo);
       guardarDatos(pestana === 'tipo'
-        ? { ...datos, joyas, tipos: datos.tipos.map((x) => (x.nombre === viejo ? { ...x, nombre: nuevo } : x)) }
-        : { ...datos, joyas, temas: datos.temas.map((x) => (x === viejo ? nuevo : x)) });
+        ? { ...datos, joyas, fijados, tipos: datos.tipos.map((x) => (x.nombre === viejo ? { ...x, nombre: nuevo } : x)) }
+        : { ...datos, joyas, fijados, temas: datos.temas.map((x) => (x === viejo ? nuevo : x)) });
       setAbierta(nuevo);
     });
     if (ok) setModo(null);
@@ -134,8 +136,8 @@ export function Categorias() {
         ? (j.tipo === viejo ? { ...j, tipo: '' } : j)
         : ((j.temas || []).includes(viejo) ? { ...j, temas: j.temas.filter((x) => x !== viejo) } : j)));
       guardarDatos(pestana === 'tipo'
-        ? { ...datos, joyas, tipos: datos.tipos.filter((x) => x.nombre !== viejo) }
-        : { ...datos, joyas, temas: datos.temas.filter((x) => x !== viejo) });
+        ? { ...datos, joyas, fijados: cambiarCategoriaEnFijados(datos.fijados, pestana, viejo, null), tipos: datos.tipos.filter((x) => x.nombre !== viejo) }
+        : { ...datos, joyas, fijados: cambiarCategoriaEnFijados(datos.fijados, pestana, viejo, null), temas: datos.temas.filter((x) => x !== viejo) });
     });
     setEliminar(null);
     if (ok) cerrar();

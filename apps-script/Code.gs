@@ -4,14 +4,17 @@
  * Todo el acceso pasa por aquí y exige la clave secreta del código de acceso.
  */
 
-var JOYERO_VERSION = 1;
+var JOYERO_VERSION = 3;
 
 var HOJA_JOYAS = 'Joyas';
 var HOJA_TIPOS = 'Tipos';
 var HOJA_TEMAS = 'Temas';
+var HOJA_FIJADOS = 'Fijados';
 var COLS_JOYAS = ['id', 'url', 'titulo', 'autor', 'descripcion', 'tipo', 'temas', 'nota', 'fecha'];
 var COLS_TIPOS = ['nombre', 'icono'];
 var COLS_TEMAS = ['nombre'];
+// clase: «joya» (columna joya = id) o «filtro» (columnas tipos y temas, separados por coma).
+var COLS_FIJADOS = ['clase', 'joya', 'tipos', 'temas', 'fecha'];
 
 // Iconos Lucide (nombre del icono). "gem" es la icona genérica.
 var ICONO_GENERICO = 'gem';
@@ -177,6 +180,9 @@ function atender_(p) {
       case 'cambiarIcono': return conBloqueo_(function () { return cambiarIcono_(d.nombre, d.icono); });
       case 'eliminarCategoria': return conBloqueo_(function () { return eliminarCategoria_(d.clase, d.nombre); });
       case 'importar': return importar_(d.joyas);
+      case 'fijar': return conBloqueo_(function () { return fijar_(d, true); });
+      case 'desfijar': return conBloqueo_(function () { return fijar_(d, false); });
+      case 'vaciar': return conBloqueo_(function () { return vaciar_(); });
       default: return { ok: false, error: 'accion' };
     }
   } catch (err) {
@@ -252,7 +258,7 @@ function leerTemas_() {
 }
 
 function leer_() {
-  return { ok: true, joyas: leerJoyas_(), tipos: leerTipos_(), temas: leerTemas_() };
+  return { ok: true, joyas: leerJoyas_(), tipos: leerTipos_(), temas: leerTemas_(), fijados: leerFijados_() };
 }
 
 /* ───────────────────────── Joyas ───────────────────────── */
@@ -336,10 +342,11 @@ function eliminar_(id) {
   for (var i = 0; i < filas.length; i++) {
     if (filas[i][0] === String(id)) {
       h.deleteRow(i + 2);
-      return { ok: true };
+      break;
     }
   }
-  return { ok: true }; // ya no existía: el resultado es el mismo
+  reescribirFijados_(function (f) { return f.clase === 'joya' && f.joya === String(id) ? null : f; });
+  return { ok: true }; // si ya no existía, el resultado es el mismo
 }
 
 /* ───────────────────────── Categorías ───────────────────────── */
@@ -399,6 +406,13 @@ function renombrarCategoria_(clase, nombre, nuevo) {
     j.temas[i] = n;
     return true;
   });
+  reescribirFijados_(function (f) {
+    if (f.clase !== 'filtro') return f;
+    var lista = clase === 'tipo' ? f.tipos : f.temas;
+    var i = lista.indexOf(viejo);
+    if (i >= 0) lista[i] = n;
+    return f;
+  });
   return { ok: true, nombre: n };
 }
 
@@ -428,6 +442,13 @@ function eliminarCategoria_(clase, nombre) {
     j.temas.splice(i, 1);
     return true;
   });
+  reescribirFijados_(function (f) {
+    if (f.clase !== 'filtro') return f;
+    var lista = clase === 'tipo' ? f.tipos : f.temas;
+    var i = lista.indexOf(viejo);
+    if (i >= 0) lista.splice(i, 1);
+    return f.tipos.length || f.temas.length ? f : null; // un filtro vacío deja de existir
+  });
   return { ok: true };
 }
 
@@ -446,6 +467,118 @@ function reescribirJoyas_(cambiar) {
   if (!cambio) return;
   h.getRange(2, 6, filas.length, 1).setValues(tipos);
   h.getRange(2, 7, filas.length, 1).setValues(temas);
+}
+
+/* ───────────────────────── Fijados ───────────────────────── */
+
+/** La pestaña «Fijados» se crea sola la primera vez (los joyeros anteriores a la versión 3 no la tienen). */
+function hojaFijados_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var h = ss.getSheetByName(HOJA_FIJADOS);
+  if (h) return h;
+  preparar_(ss, HOJA_FIJADOS, COLS_FIJADOS, [], [100, 280, 220, 260, 200]);
+  return ss.getSheetByName(HOJA_FIJADOS);
+}
+
+function leerFilasFijados_() {
+  var h = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(HOJA_FIJADOS);
+  if (!h || h.getLastRow() < 2) return [];
+  return h.getRange(2, 1, h.getLastRow() - 1, COLS_FIJADOS.length).getDisplayValues()
+    .filter(function (f) { return f[0] === 'joya' || f[0] === 'filtro'; })
+    .map(function (f) {
+      return { clase: f[0], joya: f[1], tipos: separarTemas_(f[2]), temas: separarTemas_(f[3]), fecha: f[4] };
+    });
+}
+
+/** Para la web: el último fijado primero. */
+function leerFijados_() {
+  var filas = leerFilasFijados_().sort(function (a, b) { return (Date.parse(b.fecha) || 0) - (Date.parse(a.fecha) || 0); });
+  return {
+    filtros: filas.filter(function (f) { return f.clase === 'filtro'; }).map(function (f) { return { tipos: f.tipos, temas: f.temas }; }),
+    joyas: filas.filter(function (f) { return f.clase === 'joya'; }).map(function (f) { return f.joya; })
+  };
+}
+
+function mismoFijado_(a, b) {
+  if (a.clase !== b.clase) return false;
+  if (a.clase === 'joya') return a.joya === b.joya;
+  var clave = function (l) { return l.map(normalizar).sort().join('|'); };
+  return clave(a.tipos) === clave(b.tipos) && clave(a.temas) === clave(b.temas);
+}
+
+function limpiarFijado_(d) {
+  if (!d || (d.clase !== 'joya' && d.clase !== 'filtro')) throw fallo_('datos');
+  if (d.clase === 'joya') {
+    var id = texto_(d.id, 100);
+    if (!id) throw fallo_('datos');
+    return { clase: 'joya', joya: id, tipos: [], temas: [] };
+  }
+  var lista = function (v) {
+    var r = [];
+    (Array.isArray(v) ? v : []).forEach(function (x) { var n = nombreCategoria_(x); if (n && !contieneNombre_(r, n)) r.push(n); });
+    return r;
+  };
+  var f = { clase: 'filtro', joya: '', tipos: lista(d.tipos), temas: lista(d.temas) };
+  if (!f.tipos.length && !f.temas.length) throw fallo_('datos');
+  return f;
+}
+
+/** fijar_(d, true) añade, fijar_(d, false) quita. Repetir la misma petición no cambia nada. */
+function fijar_(d, poner) {
+  var nuevo = limpiarFijado_(d);
+  var filas = leerFilasFijados_();
+  var existe = filas.some(function (f) { return mismoFijado_(f, nuevo); });
+  if (poner && !existe) {
+    nuevo.fecha = new Date().toISOString();
+    escribirFilasNuevas_(hojaFijados_(), [filaFijado_(nuevo)]);
+  } else if (!poner && existe) {
+    reescribirFijados_(function (f) { return mismoFijado_(f, nuevo) ? null : f; });
+  }
+  return { ok: true, fijados: leerFijados_() };
+}
+
+function filaFijado_(f) {
+  return [f.clase, f.joya, f.tipos.join(', '), f.temas.join(', '), f.fecha || new Date().toISOString()].map(celdaSegura_);
+}
+
+/**
+ * Aplica un cambio a cada fijado: devolver el fijado (cambiado o no) o null para quitarlo.
+ * Si dos filtros acaban siendo iguales, queda solo uno.
+ */
+function reescribirFijados_(cambiar) {
+  var h = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(HOJA_FIJADOS);
+  if (!h || h.getLastRow() < 2) return;
+  var antes = leerFilasFijados_();
+  var despues = [];
+  antes.forEach(function (f) {
+    var r = cambiar({ clase: f.clase, joya: f.joya, tipos: f.tipos.slice(), temas: f.temas.slice(), fecha: f.fecha });
+    if (r && !despues.some(function (x) { return mismoFijado_(x, r); })) despues.push(r);
+  });
+  if (JSON.stringify(antes) === JSON.stringify(despues)) return;
+  h.getRange(2, 1, h.getMaxRows() - 1, COLS_FIJADOS.length).clearContent();
+  if (despues.length) h.getRange(2, 1, despues.length, COLS_FIJADOS.length).setNumberFormat('@').setValues(despues.map(filaFijado_));
+}
+
+/* ───────────────────────── Eliminar joyero ───────────────────────── */
+
+/**
+ * Vacía el joyero: borra joyas y fijados, vuelve a los tipos y temas de base
+ * y cambia la clave, así el código deja de funcionar en todos los dispositivos.
+ * La hoja de Google sigue en el Drive.
+ */
+function vaciar_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var vaciarHoja = function (nombre, numCols) {
+    var h = ss.getSheetByName(nombre);
+    if (h && h.getMaxRows() > 1) h.getRange(2, 1, h.getMaxRows() - 1, numCols).clearContent();
+    return h;
+  };
+  vaciarHoja(HOJA_JOYAS, COLS_JOYAS.length);
+  vaciarHoja(HOJA_FIJADOS, COLS_FIJADOS.length);
+  vaciarHoja(HOJA_TIPOS, COLS_TIPOS.length).getRange(2, 1, TIPOS_BASE.length, COLS_TIPOS.length).setValues(TIPOS_BASE);
+  vaciarHoja(HOJA_TEMAS, COLS_TEMAS.length).getRange(2, 1, TEMAS_BASE.length, 1).setValues(TEMAS_BASE.map(function (t) { return [t]; }));
+  PropertiesService.getScriptProperties().deleteProperty('JOYERO_CLAVE');
+  return { ok: true };
 }
 
 /* ───────────────────────── Metadatos ───────────────────────── */
@@ -598,9 +731,10 @@ function prepararPlantilla() {
   preparar_(ss, HOJA_JOYAS, COLS_JOYAS, [], [200, 260, 260, 160, 320, 120, 220, 260, 200]);
   preparar_(ss, HOJA_TIPOS, COLS_TIPOS, TIPOS_BASE, [180, 160]);
   preparar_(ss, HOJA_TEMAS, COLS_TEMAS, TEMAS_BASE.map(function (t) { return [t]; }), [200]);
+  preparar_(ss, HOJA_FIJADOS, COLS_FIJADOS, [], [100, 280, 220, 260, 200]);
   ss.getSheets().forEach(function (h) {
     var n = h.getName();
-    if ([HOJA_JOYAS, HOJA_TIPOS, HOJA_TEMAS].indexOf(n) < 0 && h.getLastRow() === 0 && ss.getSheets().length > 3) {
+    if ([HOJA_JOYAS, HOJA_TIPOS, HOJA_TEMAS, HOJA_FIJADOS].indexOf(n) < 0 && h.getLastRow() === 0 && ss.getSheets().length > 4) {
       ss.deleteSheet(h);
     }
   });

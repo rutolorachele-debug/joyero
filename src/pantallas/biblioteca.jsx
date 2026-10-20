@@ -8,13 +8,14 @@ import { claveError } from '../lib/api.js';
 import { BotonIcono, IconoJoya, EsqueletoLista, Panel, Aviso } from '../componentes/base.jsx';
 import { FilaChips } from '../componentes/filtros.jsx';
 import { IconoTipo } from '../componentes/iconos.jsx';
-import { leerFijados, guardarFijados, mismoFiltro, nombreFiltro } from '../lib/fijados.js';
+import { mismoFiltro, nombreFiltro } from '../lib/fijados.js';
+import { mostrarAvisoBreve } from '../componentes/aviso.jsx';
 
 // Los filtros se conservan mientras la app está abierta (al volver del detalle siguen ahí).
 let filtrosGuardados = { busqueda: '', tipos: [], temas: [], porOrganizar: false };
 
 export function Biblioteca() {
-  const { datos, hayDatos, cargando, errorCarga, recargar } = usarJoyero();
+  const { datos, hayDatos, cargando, errorCarga, recargar, fijar } = usarJoyero();
   const [fGuardado, setF] = useState(filtrosGuardados);
   const [abierto, setAbierto] = useState(null); // 'tipo' | 'tema' | null
   const [menuMas, setMenuMas] = useState(false);
@@ -29,15 +30,21 @@ export function Biblioteca() {
   const filtrosActivos = hayFiltros(f);
 
   // Fijados: filtros (tipos + temas) y joyas que aparecen arriba cuando no hay búsqueda ni filtros.
-  const [fijados, setFijados] = useState(leerFijados);
+  const fijados = datos.fijados;
   const [editandoFijados, setEditandoFijados] = useState(false);
-  const cambiarFijados = (nuevo) => { guardarFijados(nuevo); setFijados(nuevo); };
+  const cambiarFijado = async (dato, poner) => {
+    const clave = dato.clase === 'joya' ? (poner ? 'joyaFijada' : 'joyaQuitada') : (poner ? 'filtroFijado' : 'filtroQuitado');
+    mostrarAvisoBreve(t('fijados.' + clave), poner ? 'pin' : 'pin-off');
+    try {
+      await fijar(dato, poner);
+    } catch (e) {
+      mostrarAvisoBreve(t(claveError(e) === 'errores.generico' ? 'errores.guardar' : claveError(e)), 'error');
+    }
+  };
   const filtroActual = { tipos: f.tipos, temas: f.temas };
   const hayFiltroFijable = f.tipos.length > 0 || f.temas.length > 0;
   const actualFijado = hayFiltroFijable && fijados.filtros.some((x) => mismoFiltro(x, filtroActual));
-  const alternarFijar = () => cambiarFijados(actualFijado
-    ? { ...fijados, filtros: fijados.filtros.filter((x) => !mismoFiltro(x, filtroActual)) }
-    : { ...fijados, filtros: [filtroActual].concat(fijados.filtros) });
+  const alternarFijar = () => cambiarFijado({ clase: 'filtro', ...filtroActual }, !actualFijado);
   const joyasFijadas = fijados.joyas.map((id) => datos.joyas.find((j) => j.id === id)).filter(Boolean);
   const verFijados = !filtrosActivos && (fijados.filtros.length > 0 || joyasFijadas.length > 0);
   const tipoIcono = (fl) => (fl.tipos.length === 1 ? (datos.tipos.find((x) => x.nombre === fl.tipos[0]) || {}).icono : null);
@@ -126,7 +133,7 @@ export function Biblioteca() {
                 <div class="fila-lista" key={nombreFiltro(fl)}>
                   {contenido}
                   <button type="button" class="quitar" aria-label={t('fijados.quitar', { nombre: nombreFiltro(fl) })}
-                    onClick={() => cambiarFijados({ ...fijados, filtros: fijados.filtros.filter((x) => !mismoFiltro(x, fl)) })}>
+                    onClick={() => cambiarFijado({ clase: 'filtro', ...fl }, false)}>
                     <MinusCircle size={22} strokeWidth={2} aria-hidden="true" />
                   </button>
                 </div>
@@ -142,7 +149,7 @@ export function Biblioteca() {
                 <IconoJoya joya={j} tipos={datos.tipos} />
                 <div class="cuerpo"><div class="titulo">{j.titulo}</div>{j.autor && <div class="autor">{j.autor}</div>}</div>
                 <button type="button" class="quitar" aria-label={t('fijados.quitar', { nombre: j.titulo })}
-                  onClick={() => cambiarFijados({ ...fijados, joyas: fijados.joyas.filter((x) => x !== j.id) })}>
+                  onClick={() => cambiarFijado({ clase: 'joya', id: j.id }, false)}>
                   <MinusCircle size={22} strokeWidth={2} aria-hidden="true" />
                 </button>
               </div>
