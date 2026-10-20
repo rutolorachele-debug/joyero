@@ -29,26 +29,35 @@ export function Ingreso() {
   );
 }
 
+/** 1.2b: un mensaje distinto según el motivo del fallo. */
+export function textoErrorCodigo(e) {
+  const c = e && e.codigo;
+  if (c === 'formato') return t('codigo.formato');
+  if (c === 'sin_conexion') return t('errores.sinConexion');
+  if (c === 'tiempo' || c === 'respuesta' || c === 'ocupado') return t('errores.noResponde');
+  return t('codigo.noValido'); // clave incorrecta u otro error
+}
+
 /** Lógica común de 1.2 y del paso 6: comprobar el código y entrar. */
 function usarEntrada() {
   const { entrar } = usarJoyero();
   const [texto, setTexto] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [enviando, setEnviando] = useState(false);
   const enviar = async () => {
     if (!texto.trim() || enviando) return;
     setEnviando(true);
-    setError(false);
+    setError('');
     try {
       await entrar(texto);
       navegar('/', { reemplazar: true });
     } catch (e) {
-      setError(true);
+      setError(textoErrorCodigo(e));
     } finally {
       setEnviando(false);
     }
   };
-  return { texto, setTexto: (v) => { setTexto(v); setError(false); }, error, enviando, enviar };
+  return { texto, setTexto: (v) => { setTexto(v); setError(''); }, error, enviando, enviar };
 }
 
 function CampoCodigo({ entrada }) {
@@ -60,7 +69,7 @@ function CampoCodigo({ entrada }) {
         valor={entrada.texto}
         onInput={entrada.setTexto}
         ejemplo={t('codigo.ejemplo')}
-        error={entrada.error ? t('codigo.noValido') : ''}
+        error={entrada.error}
         tipo="text"
         autoComplete="off"
         enterKeyHint="go"

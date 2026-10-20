@@ -34,7 +34,8 @@ export default {
     donde1: 'En tu Google Sheet de Joyero (está en tu Google Drive): menú <b>Joyero</b> > <b>Mostrar mi código</b> > <b>Copiar</b>.',
     donde2: 'Si ya usas Joyero en otro dispositivo: <b>Ajustes</b> > <b>Mi código de acceso</b> > <b>Copiar</b>.',
     noTienes: '¿No tienes joyero? Crea uno nuevo',
-    noValido: 'Este código no es válido o tu joyero no responde. Revísalo e inténtalo de nuevo.'
+    noValido: 'Este código no es válido o tu joyero no responde. Revísalo e inténtalo de nuevo.',
+    formato: 'Esto no parece un código de Joyero. Revísalo y pégalo de nuevo.'
   },
 
   tutorial: {
