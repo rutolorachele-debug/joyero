@@ -4,7 +4,6 @@ El portajoyas de tus referencias de diseño. Una web (PWA) que guarda tus «joya
 
 - `src/` · la web (Vite + Preact). Textos en `src/i18n/es.js`.
 - `apps-script/` · el script que se copia junto al Sheet modelo (Google Apps Script).
-- `joyero-aggiornamenti-script.md` · cambios pendientes del script y cómo aplicarlos.
 
 ## Desarrollo
 
