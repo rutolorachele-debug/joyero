@@ -61,6 +61,16 @@ a { color: inherit; }
 /* 2.1: título fijo arriba; búsqueda y chips se esconden al bajar y vuelven al subir */
 .columna.cabecera-fija { padding-top: 0; }
 .barra-titulo { position: sticky; top: 0; z-index: 12; background: var(--fondo); padding-top: var(--arriba); padding-bottom: 12px; }
+/* Copre anche la zona sopra la barra (status bar e Dynamic Island in Safari) e i margini laterali:
+   così niente scorre visibile dietro al titolo. */
+.barra-titulo::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; background: var(--fondo);
+  left: calc(-1 * var(--margen)); right: calc(-1 * var(--margen)); top: -200px; bottom: 0;
+}
+.barra-filtros::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; background: var(--fondo);
+  left: calc(-1 * var(--margen)); right: calc(-1 * var(--margen)); top: 0; bottom: 0;
+}
 .barra-filtros {
   position: sticky; z-index: 11; background: var(--fondo); padding: 12px 0;
   transition: transform 0.25s ease;
@@ -165,7 +175,7 @@ a { color: inherit; }
   display: flex; align-items: center; gap: 12px; padding: 0 16px; color: var(--texto2);
 }
 .buscador input {
-  flex: 1; min-width: 0; border: 0; background: transparent; color: var(--texto); font-size: 14px; outline: none;
+  flex: 1; min-width: 0; border: 0; background: transparent; color: var(--texto); font-size: 16px; /* 16 px: sotto questa misura l'iPhone ingrandisce la pagina al tocco */ outline: none;
   text-overflow: ellipsis;
 }
 .buscador input::placeholder { color: var(--texto2); opacity: 1; }
